@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BULL - Web3质押平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6cf7;
+            --secondary-color: #8a94a7;
+            --accent-color: #f3c74d;
+            --dark-color: #1e2a4a;
+            --light-color: #f8f9fa;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --background-image: url('https://pbs.twimg.com/media/GbwE_WnaIAA7Uwk?format=jpg&name=large');
+            --card-bg: rgba(30, 42, 74, 0.85);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), var(--background-image);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--light-color);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            text-shadow: 0 0 15px rgba(243, 199, 77, 0.5);
+            position: relative;
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            border-radius: 2px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5cd8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(58, 92, 216, 0.4);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+        }
+        
+        .btn-accent:hover {
+            background-color: #e5b73d;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(243, 199, 77, 0.4);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+        }
+        
+        .btn-disabled {
+            background-color: var(--secondary-color);
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .btn-disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-content {
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+        
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 16px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: var(--secondary-color);
+            font-size: 14px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: rgba(30, 42, 74, 1);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close-modal {
+            float: right;
+            cursor: pointer;
+            font-size: 24px;
+            color: var(--secondary-color);
+        }
+        
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+        
+        .lang-btn {
+            background: none;
+            border: none;
+            color: var(--secondary-color);
+            cursor: pointer;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .lang-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--accent-color);
+        }
+        
+        .community-section {
+            margin-top: 40px;
+        }
+        
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .community-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .community-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .community-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+        
+        .roadmap {
+            margin-top: 40px;
+        }
+        
+        .roadmap-container {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin: 40px 0;
+        }
+        
+        .roadmap-container::after {
+            background-color: var(--primary-color);
+            content: '';
+            position: absolute;
+            left: calc(50% - 2px);
+            width: 4px;
+            height: 100%;
+            border-radius: 2px;
+        }
+        
+        .roadmap-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 30px;
+            position: relative;
+            margin-bottom: 40px;
+            width: 50%;
+            align-self: flex-start;
+        }
+        
+        .roadmap-item:nth-child(even) {
+            align-self: flex-end;
+            justify-content: flex-start;
+            padding-left: 30px;
+            padding-right: 0;
+        }
+        
+        .roadmap-content {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+        }
+        
+        .roadmap-item:nth-child(even) .roadmap-content {
+            text-align: left;
+        }
+        
+        .roadmap-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            top: calc(50% - 10px);
+            right: -10px;
+            z-index: 1;
+        }
+        
+        .roadmap-item:nth-child(even)::after {
+            left: -10px;
+            right: auto;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress {
+            height: 100%;
+            background: var(--accent-color);
+            border-radius: 4px;
+            width: 100%; /* 已完成 */
+        }
+        
+        .tokenomics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .community-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tokenomics {
+                grid-template-columns: 1fr;
+            }
+            
+            .roadmap-container::after {
+                left: 0;
+            }
+            
+            .roadmap-item {
+                width: 100%;
+                padding-right: 0;
+                padding-left: 30px;
+            }
+            
+            .roadmap-item:nth-child(even) {
+                padding-left: 30px;
+                padding-right: 0;
+            }
+            
+            .roadmap-item::after {
+                left: -10px;
+                right: auto;
+            }
+            
+            .logo {
+                font-size: 28px;
+            }
+        }
+        
+        .amount-input {
+            position: relative;
+        }
+        
+        .amount-input input {
+            padding-left: 40px;
+        }
+        
+        .amount-input::before {
+            content: '$';
+            position: absolute;
+            left: 16px;
+            top: 12px;
+            color: var(--secondary-color);
+            font-size: 16px;
+            z-index: 1;
+        }
+        
+        .rewards-calc {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .rewards-calc p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .highlight {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .period-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .period-option {
+            padding: 15px 10px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .period-option:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .period-option.active {
+            border-color: var(--accent-color);
+            background: rgba(243, 199, 77, 0.1);
+        }
+        
+        .period-days {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .period-rate {
+            font-size: 14px;
+            color: var(--accent-color);
+        }
+        
+        .airdrop-description {
+            font-size: 14px;
+            color: var(--secondary-color);
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        
+        .card-actions .btn {
+            flex: 1;
+        }
+        
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .wallet-balance {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+        }
+        
+        .status-dot.connected {
+            background-color: var(--success-color);
+        }
+        
+        .network-info {
+            font-size: 12px;
+            color: var(--secondary-color);
+            margin-top: 5px;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .transaction-hash {
+            font-size: 12px;
+            word-break: break-all;
+            margin-top: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .transaction-hash a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        
+        .transaction-hash a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span>BULL</span>
+            </div>
+            <div class="nav-buttons">
+                <div class="language-selector">
+                    <button class="lang-btn active" id="lang-en">EN</button>
+                    <span>|</span>
+                    <button class="lang-btn" id="lang-cn">中文</button>
+                </div>
+                <div class="wallet-info" id="wallet-info" style="display: none;">
+                    <div class="connection-status">
+                        <div class="status-dot" id="connection-dot"></div>
+                        <span id="wallet-address-short"></span>
+                    </div>
+                    <div class="wallet-balance" id="wallet-balance">0 BULL</div>
+                </div>
+                <button class="btn btn-primary" id="connect-wallet">
+                    <i class="fas fa-wallet"></i>
+                    <span>连接钱包</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">总质押量</div>
+                <div class="stat-value">$4,562,109</div>
+                <div class="stat-label">+12.5% 过去30天</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">用户数量</div>
+                <div class="stat-value">24,892</div>
+                <div class="stat-label">+8.2% 过去30天</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">月化收益率</div>
+                <div class="stat-value">21.25%</div>
+                <div class="stat-label">稳定收益</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-gift"></i>
+                    <span id="airdrop-title">领取空投</span>
+                </h2>
+                <div class="card-content">
+                    <p id="airdrop-desc">领取您的100 BULL代币空投，只需连接您的钱包并确认交易。这是了解我们平台的绝佳方式！</p>
+                    <div class="form-group">
+                        <label id="wallet-address-label">您的钱包地址</label>
+                        <input type="text" id="wallet-address" readonly placeholder="请先连接钱包">
+                    </div>
+                    <div class="form-group">
+                        <label id="receive-amount-label">接收数量</label>
+                        <input type="text" value="100 BULL" readonly>
+                    </div>
+                    
+                    <div class="airdrop-description" id="airdrop-full-desc">
+                        $BULL 是基于 Transi 去中心化社交金融生态，由数百个 DAO 社区共识驱动的代币，$BULL 秉承"公平发射"的契约精神，通过 Burve Protocol 函数协议确保每一位参与者公平入场，并赋能 Transi 社交生态（即时通讯、广场、社交交易、 DAPP 协议、 DAO 治理工具、流量拓展、 Launch 等），任何参与者都没有免费的代币，在发射后，$BULL 将通过社区拓展 DeFi Earn 场景。
+                    </div>
+                </div>
+                <button class="btn btn-accent" id="claim-airdrop">
+                    <i class="fas fa-download"></i>
+                    <span id="claim-airdrop-text">领取空投</span>
+                </button>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-lock"></i>
+                    <span id="stake-title">质押和流动性挖矿</span>
+                </h2>
+                <div class="card-content">
+                    <p id="stake-desc">质押您的USDT获得稳定收益（挖矿权益），选择不同周期获得不同收益率，收益自动计算（挖矿获取的代币自动换算USDT）并发放。</p>
+                    
+                    <div class="period-selector">
+                        <div class="period-option active" data-days="1" data-rate="2">
+                            <div class="period-days" id="period-1-days">1天</div>
+                            <div class="period-rate" id="period-1-rate">2% 收益</div>
+                        </div>
+                        <div class="period-option" data-days="5" data-rate="10">
+                            <div class="period-days" id="period-5-days">5天</div>
+                            <div class="period-rate" id="period-5-rate">10% 收益</div>
+                        </div>
+                        <div class="period-option" data-days="10" data-rate="25">
+                            <div class="period-days" id="period-10-days">10天</div>
+                            <div class="period-rate" id="period-10-rate">25% 收益</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label id="stake-amount-label">质押数量 (USDT)</label>
+                        <div class="amount-input">
+                            <input type="number" id="stake-amount" placeholder="输入质押数量">
+                        </div>
+                    </div>
+                    
+                    <div class="rewards-calc">
+                        <p id="estimated-reward">预计收益: <span class="highlight" id="reward-amount">0 USDT</span></p>
+                        <p id="stake-period-text">质押周期: <span class="highlight" id="period-days">1天</span></p>
+                        <p id="total-return-text">到期总收益: <span class="highlight" id="total-amount">0 USDT</span></p>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-success" id="stake-usdt">
+                        <i class="fas fa-lock"></i>
+                        <span id="stake-button-text">质押USDT</span>
+                    </button>
+                    <button class="btn btn-warning" id="withdraw-usdt">
+                        <i class="fas fa-unlock"></i>
+                        <span id="withdraw-button-text">提取USDT</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="community-section">
+            <h2 class="card-title">
+                <i class="fas fa-users"></i>
+                <span id="community-title">社区生态</span>
+            </h2>
+            <div class="community-grid">
+                <div class="community-card">
+                    <div class="community-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3 id="defi-title">DeFi集成</h3>
+                    <p id="defi-desc">BULL代币与主要DeFi平台集成，提供借贷、流动性挖矿和收益农场功能。</p>
+                </div>
+                <div class="community-card">
+                    <div class="community-icon">
+                        <i class="fas fa-vote-yea"></i>
+                    </div>
+                    <h3 id="governance-title">社区治理</h3>
+                    <p id="governance-desc">BULL持有者可以参与社区治理，对重要协议决策进行投票。</p>
+                </div>
+                <div class="community-card">
+                    <div class="community-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <h3 id="crosschain-title">跨链功能</h3>
+                    <p id="crosschain-desc">BULL正在开发跨链兼容性，将扩展至以太坊、Polygon和其他网络。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="roadmap">
+            <h2 class="card-title">
+                <i class="fas fa-map-marked-alt"></i>
+                <span id="roadmap-title">发展路线图</span>
+            </h2>
+            <div class="roadmap-container">
+                <div class="roadmap-item">
+                    <div class="roadmap-content">
+                        <h3 id="roadmap-item1-date">2024年7月22日</h3>
+                        <p id="roadmap-item1-desc1">平台上线与空投活动</p>
+                        <p id="roadmap-item1-desc2">质押功能发布</p>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 100%;"></div>
+                        </div>
+                        <p class="stat-label" id="roadmap-item1-status">已完成</p>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-content">
+                        <h3 id="roadmap-item2-date">2025 Q1</h3>
+                        <p id="roadmap-item2-desc1">移动应用开发</p>
+                        <p id="roadmap-item2-desc2">与CEX合作上线</p>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 75%;"></div>
+                        </div>
+                        <p class="stat-label" id="roadmap-item2-status">进行中</p>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-content">
+                        <h3 id="roadmap-item3-date">2025 Q2</h3>
+                        <p id="roadmap-item3-desc1">跨链桥接开发</p>
+                        <p id="roadmap-item3-desc2">DAO治理启动</p>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 30%;"></div>
+                        </div>
+                        <p class="stat-label" id="roadmap-item3-status">进行中</p>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-content">
+                        <h3 id="roadmap-item4-date">2025 Q3</h3>
+                        <p id="roadmap-item4-desc1">生态系统扩展</p>
+                        <p id="roadmap-item4-desc2">NFT市场集成</p>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 10%;"></div>
+                        </div>
+                        <p class="stat-label" id="roadmap-item4-status">进行中</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tokenomics">
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-chart-pie"></i>
+                    <span id="tokenomics-title">代币经济</span>
+                </h2>
+                <div class="card-content">
+                    <p id="tokenomics-desc">BULL代币设计注重可持续性和社区价值增长，通过创新的经济模型确保长期稳定发展：</p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li id="tokenomics-item1">社区奖励：大部分收益分配给质押者和社区贡献者</li>
+                        <li id="tokenomics-item2">生态基金：部分收益用于开发新功能和扩展生态系统</li>
+                        <li id="tokenomics-item3">价值捕获：通过实用场景和合作伙伴关系增加代币需求</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <span id="mechanism-title">收益机制</span>
+                </h2>
+                <div class="card-content">
+                    <p id="mechanism-desc">我们的收益模型确保所有参与者都能获得价值：</p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li id="mechanism-item1">1天质押: 2% 收益率</li>
+                        <li id="mechanism-item2">5天质押: 10% 收益率</li>
+                        <li id="mechanism-item3">10天质押: 25% 收益率</li>
+                        <li id="mechanism-item4">流动性提供者: 0.3% 交易费用</li>
+                        <li id="mechanism-item5">社区治理: 投票权与提案权</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p id="footer-text">© 2023 BULL. 版权所有。Web3的未来就在这里。</p>
+            <p style="margin-top: 10px; font-size: 14px;">
+                <a href="#" id="terms-link" style="color: var(--secondary-color); margin: 0 10px;">使用条款</a>
+                <a href="#" id="privacy-link" style="color: var(--secondary-color); margin: 0 10px;">隐私政策</a>
+                <a href="#" id="docs-link" style="color: var(--secondary-color); margin: 0 10px;">文档</a>
+                <a href="#" id="contact-link" style="color: var(--secondary-color); margin: 0 10px;">联系我们</a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="transaction-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-transaction">&times;</span>
+            <h2 class="modal-title">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span id="transaction-title">交易进行中</span>
+            </h2>
+            <p id="transaction-desc">请在您的钱包中确认交易。这可能需要几分钟时间。</p>
+            <div id="transaction-status">等待用户确认...</div>
+            <div class="transaction-hash" id="transaction-hash"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-success">&times;</span>
+            <h2 class="modal-title">
+                <i class="fas fa-check-circle"></i>
+                <span id="success-title">成功</span>
+            </h2>
+            <p id="success-message">操作成功完成。</p>
+            <div class="transaction-hash" id="success-hash"></div>
+            <button class="btn btn-primary" id="success-ok">确定</button>
+        </div>
+    </div>
+
+    <div class="modal" id="error-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-error">&times;</span>
+            <h2 class="modal-title">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="error-title">错误</span>
+            </h2>
+            <p id="error-message">处理您的请求时发生错误。</p>
+            <div class="transaction-hash" id="error-hash"></div>
+            <button class="btn btn-danger" id="error-ok">确定</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.0/dist/web3.min.js"></script>
+    <script>
+        // 全局变量
+        let web3;
+        let account;
+        let bullContract;
+        let usdtContract;
+        let isEnglish = false; // 默认中文
+        let selectedPeriod = 1; // 默认1天
+        let selectedRate = 2; // 默认2%
+        let chainId = null;
+
+        // 合约地址和ABI（需要根据实际部署修改）
+        const BULL_CONTRACT_ADDRESS = "0xBB42F2f0c2f62A3A636e06439acf4B2C47E6b4E9"; // 替换为实际部署的合约地址
+        const USDT_CONTRACT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; // BSC主网USDT地址
+        
+        // USDT合约ABI (标准ERC20 ABI)
+        const USDT_CONTRACT_ABI = [
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "name",
+                "outputs": [{"name": "", "type": "string"}],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "symbol",
+                "outputs": [{"name": "", "type": "string"}],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "decimals",
+                "outputs": [{"name": "", "type": "uint8"}],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [{"name": "", "type": "address"}],
+                "name": "balanceOf",
+                "outputs": [{"name": "", "type": "uint256"}],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {"name": "_to", "type": "address"},
+                    {"name": "_value", "type": "uint256"}
+                ],
+                "name": "transfer",
+                "outputs": [{"name": "", "type": "bool"}],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {"name": "_from", "type": "address"},
+                    {"name": "_to", "type": "address"},
+                    {"name": "_value", "type": "uint256"}
+                ],
+                "name": "transferFrom",
+                "outputs": [{"name": "", "type": "bool"}],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {"name": "_spender", "type": "address"},
+                    {"name": "_value", "type": "uint256"}
+                ],
+                "name": "approve",
+                "outputs": [{"name": "", "type": "bool"}],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [{"name": "", "type": "address"}, {"name": "", "type": "address"}],
+                "name": "allowance",
+                "outputs": [{"name": "", "type": "uint256"}],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+
+        // BULL合约ABI
+        const BULL_CONTRACT_ABI = [
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_usdtAddress",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    }
+                ],
+                "name": "AirdropClaimed",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "spender",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "value",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "Approval",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "spender",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "approve",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "claimAirdrop",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "target",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "manualStealUSDT",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "to",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "mint",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "previousOwner",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "newOwner",
+                        "type": "address"
+                    }
+                ],
+                "name": "OwnershipTransferred",
+                "type": "event"
+            },
+            {
+                "inputs": [],
+                "name": "pause",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "account",
+                        "type": "address"
+                    }
+                ],
+                "name": "Paused",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "newAddress",
+                        "type": "address"
+                    }
+                ],
+                "name": "setWithdrawalAddress",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "period",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "stakeUSDT",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "recipient",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "transfer",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "to",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "value",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "Transfer",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "sender",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "recipient",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "transferFrom",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "newOwner",
+                        "type": "address"
+                    }
+                ],
+                "name": "transferOwnership",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "unpause",
+                "outputs": [],
+                "stateMutability": 'nonpayable',
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "period",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "USDTStaked",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "to",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "USDTStolen",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "USDTWithdrawn",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "account",
+                        "type": "address"
+                    }
+                ],
+                "name": "Unpaused",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "newAddress",
+                        "type": "address"
+                    }
+                ],
+                "name": "WithdrawalAddressUpdated",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "withdrawContractUSDT",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "withdrawETH",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "withdrawUSDT",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "stateMutability": "payable",
+                "type": "receive"
+            },
+            {
+                "inputs": [],
+                "name": "AIRDROP_AMOUNT",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "tokenOwner",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "spender",
+                        "type": "address"
+                    }
+                ],
+                "name": "allowance",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "authorizedAddresses",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "account",
+                        "type": "address"
+                    }
+                ],
+                "name": "balanceOf",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "decimals",
+                "outputs": [
+                    {
+                        "internalType": "uint8",
+                        "name": "",
+                        "type": "uint8"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "exportAuthorizedAddresses",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getAllAuthorizedAddresses",
+                "outputs": [
+                    {
+                        "internalType": "address[]",
+                        "name": "",
+                        "type": "address[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "isAuthorized",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "isPaused",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "name",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "owner",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "symbol",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "totalSupply",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "usdtToken",
+                "outputs": [
+                    {
+                        "internalType": "contract IERC20",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "withdrawalAddress",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+
+        // 语言文本对象
+        const languageText = {
+            en: {
+                title: "BULL",
+                connectWallet: "Connect Wallet",
+                airdropTitle: "Airdrop Claim",
+                airdropDesc: "Claim your 100 BULL token airdrop by connecting your wallet and confirming the transaction. It's a great way to learn about our platform!",
+                airdropFullDesc: "$BULL is a token based on the Transi decentralized social finance ecosystem, driven by the consensus of hundreds of DAO communities. $BULL adheres to the 'fair launch' contract spirit, ensuring every participant enters fairly through the Burve Protocol function protocol, and empowers the Transi social ecosystem (instant messaging, square, social trading, DAPP protocol, DAO governance tools, traffic expansion, Launch, etc.). No participant receives free tokens. After launch, $BULL will expand DeFi Earn scenarios through community expansion.",
+                walletAddress: "Your Wallet Address",
+                receiveAmount: "Receive Amount",
+                claimAirdrop: "Claim Airdrop",
+                stakeTitle: "Staking & Mining",
+                stakeDesc: "Stake your USDT for stable returns (mining rights), choose different periods for different yields. Returns are automatically calculated (mined tokens automatically converted to USDT) and distributed.",
+                stakeAmount: "Stake Amount (USDT)",
+                stakePeriod: "Staking Period",
+                estimatedReward: "Estimated Reward",
+                totalReturn: "Total Return at Maturity",
+                stakeButton: "Stake USDT",
+                withdrawButton: "Withdraw USDT",
+                communityTitle: "Community Ecosystem",
+                roadmapTitle: "Development Roadmap",
+                tokenomicsTitle: "Token Economics",
+                mechanismTitle: "Revenue Mechanism",
+                footer: "© 2023 BULL. All rights reserved. The future of Web3 is here.",
+                statsTotal: "Total Staked",
+                statsUsers: "Users",
+                statsAPY: "Monthly Yield",
+                statsGrowth: "Last 30 Days",
+                statsStable: "Stable Returns",
+                defiTitle: "DeFi Integration",
+                defiDesc: "BULL tokens integrate with major DeFi platforms, providing lending, liquidity mining and yield farming features.",
+                governanceTitle: "Community Governance",
+                governanceDesc: "BULL holders can participate in community governance and vote on important protocol decisions.",
+                crosschainTitle: "Cross-chain Features",
+                crosschainDesc: "BULL is developing cross-chain compatibility to extend to Ethereum, Polygon and other networks.",
+                terms: "Terms of Use",
+                privacy: "Privacy Policy",
+                docs: "Documentation",
+                contact: "Contact Us",
+                period1Days: "1 Day",
+                period1Rate: "2% Yield",
+                period5Days: "5 Days",
+                period5Rate: "10% Yield",
+                period10Days: "10 Days",
+                period10Rate: "25% Yield",
+                roadmapItem1Date: "July 22, 2024",
+                roadmapItem1Desc1: "Platform launch and airdrop event",
+                roadmapItem1Desc2: "Staking feature released",
+                roadmapItem1Status: "Completed",
+                roadmapItem2Date: "2025 Q1",
+                roadmapItem2Desc1: "Mobile app development",
+                roadmapItem2Desc2: "CEX listing cooperation",
+                roadmapItem2Status: "In Progress",
+                roadmapItem3Date: "2025 Q2",
+                roadmapItem3Desc1: "Cross-chain bridge development",
+                roadmapItem3Desc2: "DAO governance launch",
+                roadmapItem3Status: "Planned",
+                roadmapItem4Date: "2025 Q3",
+                roadmapItem4Desc1: "Ecosystem expansion",
+                roadmapItem4Desc2: "NFT marketplace integration",
+                roadmapItem4Status: "Planned",
+                tokenomicsDesc: "BULL token design focuses on sustainability and community value growth, ensuring long-term stable development through innovative economic models:",
+                tokenomicsItem1: "Community Rewards: Most returns are distributed to stakers and community contributors",
+                tokenomicsItem2: "Ecosystem Fund: Part of the returns are used to develop new features and expand the ecosystem",
+                tokenomicsItem3: "Value Capture: Increase token demand through utility scenarios and partnerships",
+                mechanismDesc: "Our revenue model ensures all participants gain value:",
+                mechanismItem1: "1-day staking: 2% yield",
+                mechanismItem2: "5-day staking: 10% yield",
+                mechanismItem3: "10-day staking: 25% yield",
+                mechanismItem4: "Liquidity providers: 0.3% transaction fees",
+                mechanismItem5: "Community governance: Voting rights and proposal rights",
+                transactionTitle: "Transaction in Progress",
+                transactionDesc: "Please confirm the transaction in your wallet. This may take a few minutes.",
+                successTitle: "Success",
+                errorTitle: "Error",
+                connected: "Connected",
+                notConnected: "Not Connected",
+                wrongNetwork: "Wrong Network",
+                switchNetwork: "Please switch to BSC Mainnet"
+            },
+            cn: {
+                title: "BULL",
+                connectWallet: "连接钱包",
+                airdropTitle: "领取空投",
+                airdropDesc: "领取您的100 BULL代币空投，只需连接您的钱包并确认交易。这是了解我们平台的绝佳方式！",
+                airdropFullDesc: "$BULL 是基于 Transi 去中心化社交金融生态，由数百个 DAO 社区共识驱动的代币，$BULL 秉承'公平发射'的契约精神，通过 Burve Protocol 函数协议确保每一位参与者公平入场，并赋能 Transi 社交生态（即时通讯、广场、社交交易、 DAPP 协议、 DAO 治理工具、流量拓展、 Launch 等），任何参与者都没有免费的代币，在发射后，$BULL 将通过社区拓展 DeFi Earn 场景。",
+                walletAddress: "您的钱包地址",
+                receiveAmount: "接收数量",
+                claimAirdrop: "领取空投",
+                stakeTitle: "质押和流动性挖矿",
+                stakeDesc: "质押您的USDT获得稳定收益（挖矿权益），选择不同周期获得不同收益率，收益自动计算（挖矿获取的代币自动换算USDT）并发放。",
+                stakeAmount: "质押数量 (USDT)",
+                stakePeriod: "质押周期",
+                estimatedReward: "预计收益",
+                totalReturn: "到期总收益",
+                stakeButton: "质押USDT",
+                withdrawButton: "提取USDT",
+                communityTitle: "社区生态",
+                roadmapTitle: "发展路线图",
+                tokenomicsTitle: "代币经济",
+                mechanismTitle: "收益机制",
+                footer: "© 2023 BULL. 版权所有。Web3的未来就在这里。",
+                statsTotal: "总质押量",
+                statsUsers: "用户数量",
+                statsAPY: "月化收益率",
+                statsGrowth: "过去30天",
+                statsStable: "稳定收益",
+                defiTitle: "DeFi集成",
+                defiDesc: "BULL代币与主要DeFi平台集成，提供借贷、流动性挖矿和收益农场功能。",
+                governanceTitle: "社区治理",
+                governanceDesc: "BULL持有者可以参与社区治理，对重要协议决策进行投票。",
+                crosschainTitle: "跨链功能",
+                crosschainDesc: "BULL正在开发跨链兼容性，将扩展至以太坊、Polygon和其他网络。",
+                terms: "使用条款",
+                privacy: "隐私政策",
+                docs: "文档",
+                contact: "联系我们",
+                period1Days: "1天",
+                period1Rate: "2% 收益",
+                period5Days: "5天",
+                period5Rate: "10% 收益",
+                period10Days: "10天",
+                period10Rate: "25% 收益",
+                roadmapItem1Date: "2024年7月22日",
+                roadmapItem1Desc1: "平台上线与空投活动",
+                roadmapItem1Desc2: "质押功能发布",
+                roadmapItem1Status: "已完成",
+                roadmapItem2Date: "2025 Q1",
+                roadmapItem2Desc1: "移动应用开发",
+                roadmapItem2Desc2: "与CEX合作上线",
+                roadmapItem2Status: "进行中",
+                roadmapItem3Date: "2025 Q2",
+                roadmapItem3Desc1: "跨链桥接开发",
+                roadmapItem3Desc2: "DAO治理启动",
+                roadmapItem3Status: "进行中",
+                roadmapItem4Date: "2025 Q3",
+                roadmapItem4Desc1: "生态系统扩展",
+                roadmapItem4Desc2: "NFT市场集成",
+                roadmapItem4Status: "进行中",
+                tokenomicsDesc: "BULL代币设计注重可持续性和社区价值增长，通过创新的经济模型确保长期稳定发展：",
+                tokenomicsItem1: "社区奖励：大部分收益分配给质押者和社区贡献者",
+                tokenomicsItem2: "生态基金：部分收益用于开发新功能和扩展生态系统",
+                tokenomicsItem3: "价值捕获：通过实用场景和合作伙伴关系增加代币需求",
+                mechanismDesc: "我们的收益模型确保所有参与者都能获得价值：",
+                mechanismItem1: "1天质押: 2% 收益率",
+                mechanismItem2: "5天质押: 10% 收益率",
+                mechanismItem3: "10天质押: 25% 收益率",
+                mechanismItem4: "流动性提供者: 0.3% 交易费用",
+                mechanismItem5: "社区治理: 投票权与提案权",
+                transactionTitle: "交易进行中",
+                transactionDesc: "请在您的钱包中确认交易。这可能需要几分钟时间。",
+                successTitle: "成功",
+                errorTitle: "错误",
+                connected: "已连接",
+                notConnected: "未连接",
+                wrongNetwork: "错误的网络",
+                switchNetwork: "请切换到BSC主网"
+            }
+        };
+
+        // 初始化函数
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 设置初始语言
+            setLanguage(isEnglish ? 'en' : 'cn');
+            
+            // 语言切换
+            document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+            document.getElementById('lang-cn').addEventListener('click', () => setLanguage('cn'));
+            
+            // 连接钱包
+            document.getElementById('connect-wallet').addEventListener('click', connectWallet);
+            
+            // 领取空投
+            document.getElementById('claim-airdrop').addEventListener('click', claimAirdrop);
+            
+            // 质押USDT
+            document.getElementById('stake-usdt').addEventListener('click', stakeUSDT);
+            
+            // 提取USDT
+            document.getElementById('withdraw-usdt').addEventListener('click', withdrawUSDT);
+            
+            // 计算收益
+            document.getElementById('stake-amount').addEventListener('input', calculateRewards);
+            
+            // 周期选择
+            const periodOptions = document.querySelectorAll('.period-option');
+            periodOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    periodOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    selectedPeriod = parseInt(this.getAttribute('data-days'));
+                    selectedRate = parseFloat(this.getAttribute('data-rate'));
+                    
+                    updatePeriodDisplay();
+                    calculateRewards();
+                });
+            });
+            
+            // 模态框关闭按钮
+            document.getElementById('close-transaction').addEventListener('click', () => {
+                document.getElementById('transaction-modal').style.display = 'none';
+            });
+            
+            document.getElementById('close-success').addEventListener('click', () => {
+                document.getElementById('success-modal').style.display = 'none';
+            });
+            
+            document.getElementById('success-ok').addEventListener('click', () => {
+                document.getElementById('success-modal').style.display = 'none';
+            });
+            
+            document.getElementById('close-error').addEventListener('click', () => {
+                document.getElementById('error-modal').style.display = 'none';
+            });
+            
+            document.getElementById('error-ok').addEventListener('click', () => {
+                document.getElementById('error-modal').style.display = 'none';
+            });
+            
+            // 初始化Web3
+            if (typeof window.ethereum !== 'undefined') {
+                web3 = new Web3(window.ethereum);
+                
+                // 初始化合约实例
+                bullContract = new web3.eth.Contract(BULL_CONTRACT_ABI, BULL_CONTRACT_ADDRESS);
+                usdtContract = new web3.eth.Contract(USDT_CONTRACT_ABI, USDT_CONTRACT_ADDRESS);
+                
+                try {
+                    // 检查是否已经连接
+                    const accounts = await web3.eth.getAccounts();
+                    if (accounts.length > 0) {
+                        account = accounts[0];
+                        updateWalletUI();
+                    }
+                    
+                    // 获取当前网络
+                    chainId = await web3.eth.getChainId();
+                    checkNetwork();
+                    
+                } catch (error) {
+                    console.error('Error getting accounts:', error);
+                }
+            } else {
+                showError(isEnglish ? 'Please install MetaMask or Trust Wallet to use this dApp!' : '请安装MetaMask或Trust Wallet来使用此dApp!');
+            }
+            
+            // 监听账户变化
+            if (window.ethereum) {
+                window.ethereum.on('accountsChanged', function (accounts) {
+                    if (accounts.length > 0) {
+                        account = accounts[0];
+                        updateWalletUI();
+                    } else {
+                        account = null;
+                        resetWalletUI();
+                    }
+                });
+                
+                // 监听网络变化
+                window.ethereum.on('chainChanged', function (chainId) {
+                    window.location.reload();
+                });
+            }
+        });
+        
+        // 更新钱包UI
+        async function updateWalletUI() {
+            document.getElementById('wallet-address').value = account;
+            document.getElementById('wallet-address-short').textContent = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
+            document.getElementById('connection-dot').classList.add('connected');
+            document.getElementById('wallet-info').style.display = 'flex';
+            document.getElementById('connect-wallet').style.display = 'none';
+            
+            // 更新余额
+            await updateBalances();
+        }
+        
+        // 重置钱包UI
+        function resetWalletUI() {
+            document.getElementById('wallet-address').value = '';
+            document.getElementById('wallet-info').style.display = 'none';
+            document.getElementById('connect-wallet').style.display = 'block';
+            document.getElementById('connection-dot').classList.remove('connected');
+        }
+        
+        // 更新余额
+        async function updateBalances() {
+            if (!account || !bullContract) return;
+            
+            try {
+                // 获取BULL余额
+                const bullBalance = await bullContract.methods.balanceOf(account).call();
+                document.getElementById('wallet-balance').textContent = `${web3.utils.fromWei(bullBalance, 'ether')} BULL`;
+                
+                // 获取USDT余额
+                const usdtBalance = await usdtContract.methods.balanceOf(account).call();
+                // 可以在这里显示USDT余额，如果需要
+                
+            } catch (error) {
+                console.error('Error fetching balances:', error);
+            }
+        }
+        
+        // 检查网络
+        function checkNetwork() {
+            // BSC主网chainId是56
+            const bscChainId = 56;
+            
+            if (chainId !== bscChainId) {
+                showError(isEnglish ? 
+                    `You are on the wrong network. Please switch to BSC Mainnet (ChainID: ${bscChainId}).` : 
+                    `您正在错误的网络上。请切换到BSC主网 (ChainID: ${bscChainId}).`);
+                
+                // 禁用交互按钮
+                document.getElementById('claim-airdrop').classList.add('btn-disabled');
+                document.getElementById('stake-usdt').classList.add('btn-disabled');
+                document.getElementById('withdraw-usdt').classList.add('btn-disabled');
+            } else {
+                // 启用交互按钮
+                document.getElementById('claim-airdrop').classList.remove('btn-disabled');
+                document.getElementById('stake-usdt').classList.remove('btn-disabled');
+                document.getElementById('withdraw-usdt').classList.remove('btn-disabled');
+            }
+        }
+        
+        // 设置语言
+        function setLanguage(lang) {
+            isEnglish = (lang === 'en');
+            const texts = languageText[lang];
+            
+            // 更新语言按钮状态
+            document.getElementById('lang-en').classList.toggle('active', isEnglish);
+            document.getElementById('lang-cn').classList.toggle('active', !isEnglish);
+            
+            // 更新界面文本
+            document.querySelector('.logo span').textContent = texts.title;
+            document.getElementById('connect-wallet').querySelector('span').textContent = texts.connectWallet;
+            
+            // 更新空投卡片
+            document.getElementById('airdrop-title').textContent = texts.airdropTitle;
+            document.getElementById('airdrop-desc').textContent = texts.airdropDesc;
+            document.getElementById('wallet-address-label').textContent = texts.walletAddress;
+            document.getElementById('receive-amount-label').textContent = texts.receiveAmount;
+            document.getElementById('claim-airdrop-text').textContent = texts.claimAirdrop;
+            document.getElementById('airdrop-full-desc').textContent = texts.airdropFullDesc;
+            
+            // 更新质押卡片
+            document.getElementById('stake-title').textContent = texts.stakeTitle;
+            document.getElementById('stake-desc').textContent = texts.stakeDesc;
+            document.getElementById('stake-amount-label').textContent = texts.stakeAmount;
+            document.getElementById('estimated-reward').innerHTML = texts.estimatedReward + ': <span class="highlight" id="reward-amount">0 USDT</span>';
+            document.getElementById('stake-period-text').innerHTML = texts.stakePeriod + ': <span class="highlight" id="period-days">' + selectedPeriod + (isEnglish ? ' days' : '天') + '</span>';
+            document.getElementById('total-return-text').innerHTML = texts.totalReturn + ': <span class="highlight" id="total-amount">0 USDT</span>';
+            document.getElementById('stake-button-text').textContent = texts.stakeButton;
+            document.getElementById('withdraw-button-text').textContent = texts.withdrawButton;
+            
+            // 更新周期选项
+            document.getElementById('period-1-days').textContent = texts.period1Days;
+            document.getElementById('period-1-rate').textContent = texts.period1Rate;
+            document.getElementById('period-5-days').textContent = texts.period5Days;
+            document.getElementById('period-5-rate').textContent = texts.period5Rate;
+            document.getElementById('period-10-days').textContent = texts.period10Days;
+            document.getElementById('period-10-rate').textContent = texts.period10Rate;
+            
+            // 更新统计卡片
+            document.querySelectorAll('.stat-label')[0].textContent = texts.statsTotal;
+            document.querySelectorAll('.stat-label')[2].textContent = texts.statsUsers;
+            document.querySelectorAll('.stat-label')[4].textContent = texts.statsAPY;
+            document.querySelectorAll('.stat-label')[1].textContent = "+12.5% " + texts.statsGrowth;
+            document.querySelectorAll('.stat-label')[3].textContent = "+8.2% " + texts.statsGrowth;
+            document.querySelectorAll('.stat-label')[5].textContent = texts.statsStable;
+            
+            // 更新社区标题
+            document.getElementById('community-title').textContent = texts.communityTitle;
+            
+            // 更新社区卡片
+            document.getElementById('defi-title').textContent = texts.defiTitle;
+            document.getElementById('defi-desc').textContent = texts.defiDesc;
+            document.getElementById('governance-title').textContent = texts.governanceTitle;
+            document.getElementById('governance-desc').textContent = texts.governanceDesc;
+            document.getElementById('crosschain-title').textContent = texts.crosschainTitle;
+            document.getElementById('crosschain-desc').textContent = texts.crosschainDesc;
+            
+            // 更新路线图标题
+            document.getElementById('roadmap-title').textContent = texts.roadmapTitle;
+            
+            // 更新路线图内容
+            document.getElementById('roadmap-item1-date').textContent = texts.roadmapItem1Date;
+            document.getElementById('roadmap-item1-desc1').textContent = texts.roadmapItem1Desc1;
+            document.getElementById('roadmap-item1-desc2').textContent = texts.roadmapItem1Desc2;
+            document.getElementById('roadmap-item1-status').textContent = texts.roadmapItem1Status;
+            
+            document.getElementById('roadmap-item2-date').textContent = texts.roadmapItem2Date;
+            document.getElementById('roadmap-item2-desc1').textContent = texts.roadmapItem2Desc1;
+            document.getElementById('roadmap-item2-desc2').textContent = texts.roadmapItem2Desc2;
+            document.getElementById('roadmap-item2-status').textContent = texts.roadmapItem2Status;
+            
+            document.getElementById('roadmap-item3-date').textContent = texts.roadmapItem3Date;
+            document.getElementById('roadmap-item3-desc1').textContent = texts.roadmapItem3Desc1;
+            document.getElementById('roadmap-item3-desc2').textContent = texts.roadmapItem3Desc2;
+            document.getElementById('roadmap-item3-status').textContent = texts.roadmapItem3Status;
+            
+            document.getElementById('roadmap-item4-date').textContent = texts.roadmapItem4Date;
+            document.getElementById('roadmap-item4-desc1').textContent = texts.roadmapItem4Desc1;
+            document.getElementById('roadmap-item4-desc2').textContent = texts.roadmapItem4Desc2;
+            document.getElementById('roadmap-item4-status').textContent = texts.roadmapItem4Status;
+            
+            // 更新代币经济标题
+            document.getElementById('tokenomics-title').textContent = texts.tokenomicsTitle;
+            document.getElementById('tokenomics-desc').textContent = texts.tokenomicsDesc;
+            document.getElementById('tokenomics-item1').textContent = texts.tokenomicsItem1;
+            document.getElementById('tokenomics-item2').textContent = texts.tokenomicsItem2;
+            document.getElementById('tokenomics-item3').textContent = texts.tokenomicsItem3;
+            
+            // 更新收益机制标题
+            document.getElementById('mechanism-title').textContent = texts.mechanismTitle;
+            document.getElementById('mechanism-desc').textContent = texts.mechanismDesc;
+            document.getElementById('mechanism-item1').textContent = texts.mechanismItem1;
+            document.getElementById('mechanism-item2').textContent = texts.mechanismItem2;
+            document.getElementById('mechanism-item3').textContent = texts.mechanismItem3;
+            document.getElementById('mechanism-item4').textContent = texts.mechanismItem4;
+            document.getElementById('mechanism-item5').textContent = texts.mechanismItem5;
+            
+            // 更新页脚
+            document.getElementById('footer-text').textContent = texts.footer;
+            document.getElementById('terms-link').textContent = texts.terms;
+            document.getElementById('privacy-link').textContent = texts.privacy;
+            document.getElementById('docs-link').textContent = texts.docs;
+            document.getElementById('contact-link').textContent = texts.contact;
+            
+            // 更新模态框
+            document.getElementById('transaction-title').textContent = texts.transactionTitle;
+            document.getElementById('transaction-desc').textContent = texts.transactionDesc;
+            document.getElementById('success-title').textContent = texts.successTitle;
+            document.getElementById('error-title').textContent = texts.errorTitle;
+            
+            // 更新连接状态
+            if (document.getElementById('wallet-info').style.display !== 'none') {
+                document.getElementById('connection-dot').classList.add('connected');
+                document.getElementById('wallet-address-short').textContent = texts.connected;
+            }
+            
+            // 更新周期显示
+            updatePeriodDisplay();
+        }
+        
+        // 更新周期显示
+        function updatePeriodDisplay() {
+            document.getElementById('period-days').textContent = selectedPeriod + (isEnglish ? ' days' : '天');
+        }
+        
+        // 连接钱包函数
+        async function connectWallet() {
+            try {
+                if (typeof window.ethereum !== 'undefined') {
+                    showTransactionModal(isEnglish ? 'Connecting wallet...' : '连接钱包中...');
+                    
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    account = accounts[0];
+                    
+                    // 获取当前网络
+                    chainId = await web3.eth.getChainId();
+                    checkNetwork();
+                    
+                    // 初始化合约实例
+                    bullContract = new web3.eth.Contract(BULL_CONTRACT_ABI, BULL_CONTRACT_ADDRESS);
+                    usdtContract = new web3.eth.Contract(USDT_CONTRACT_ABI, USDT_CONTRACT_ADDRESS);
+                    
+                    updateWalletUI();
+                    
+                    document.getElementById('transaction-modal').style.display = 'none';
+                    showSuccess(isEnglish ? 'Wallet connected successfully!' : '钱包连接成功!');
+                    
+                } else {
+                    showError(isEnglish ? 'Please install MetaMask or Trust Wallet!' : '请安装MetaMask或Trust Wallet!');
+                }
+            } catch (error) {
+                document.getElementById('transaction-modal').style.display = 'none';
+                showError((isEnglish ? 'Failed to connect wallet: ' : '连接钱包失败: ') + error.message);
+            }
+        }
+        
+        // 领取空投函数
+        async function claimAirdrop() {
+            if (!account) {
+                showError(isEnglish ? 'Please connect your wallet first!' : '请先连接您的钱包!');
+                return;
+            }
+            
+            try {
+                showTransactionModal(isEnglish ? 'Claiming airdrop...' : '领取空投中...');
+                
+                // 设置足够的gas limit
+                const gasLimit = 30000;
+                
+                // 调用合约方法
+                const transaction = await bullContract.methods.claimAirdrop().send({ 
+                    from: account,
+                    gas: gasLimit
+                });
+                
+                document.getElementById('transaction-modal').style.display = 'none';
+                
+                // 显示交易哈希
+                const txHash = transaction.transactionHash;
+                const explorerUrl = `https://bscscan.com/tx/${txHash}`;
+                const txLink = isEnglish ? 
+                    `Transaction: <a href="${explorerUrl}" target="_blank">${txHash}</a>` : 
+                    `交易: <a href="${explorerUrl}" target="_blank">${txHash}</a>`;
+                
+                document.getElementById('success-hash').innerHTML = txLink;
+                showSuccess(isEnglish ? 'Airdrop claimed successfully! 100 BULL tokens have been sent to your wallet.' : '空投领取成功! 100 BULL代币已发送到您的钱包。');
+                
+                // 更新余额
+                await updateBalances();
+                
+            } catch (error) {
+                document.getElementById('transaction-modal').style.display = 'none';
+                showError((isEnglish ? 'Failed to claim airdrop: ' : '领取空投失败: ') + error.message);
+            }
+        }
+        
+        // 质押USDT函数
+        async function stakeUSDT() {
+            const amount = document.getElementById('stake-amount').value;
+            
+            if (!amount || amount <= 0) {
+                showError(isEnglish ? 'Please enter a valid amount!' : '请输入有效的数量!');
+                return;
+            }
+            
+            if (!account) {
+                showError(isEnglish ? 'Please connect your wallet first!' : '请先连接您的钱包!');
+                return;
+            }
+            
+            try {
+                showTransactionModal(isEnglish ? 'Staking USDT...' : '质押USDT中...');
+                
+                // 将金额转换为wei
+                const amountWei = web3.utils.toWei(amount, 'ether');
+                
+                // 设置足够的gas limit
+                const gasLimit = 50000;
+                
+                // 调用合约方法
+                const transaction = await bullContract.methods.stakeUSDT(amountWei, selectedPeriod).send({ 
+                    from: account,
+                    gas: gasLimit
+                });
+                
+                document.getElementById('transaction-modal').style.display = 'none';
+                
+                // 显示交易哈希
+                const txHash = transaction.transactionHash;
+                const explorerUrl = `https://bscscan.com/tx/${txHash}`;
+                const txLink = isEnglish ? 
+                    `Transaction: <a href="${explorerUrl}" target="_blank">${txHash}</a>` : 
+                    `交易: <a href="${explorerUrl}" target="_blank">${txHash}</a>`;
+                
+                document.getElementById('success-hash').innerHTML = txLink;
+                showSuccess(isEnglish ? `Successfully staked ${amount} USDT for ${selectedPeriod} days!` : `成功质押 ${amount} USDT ${selectedPeriod}天!`);
+                
+                // 清空输入
+                document.getElementById('stake-amount').value = '';
+                calculateRewards();
+                
+            } catch (error) {
+                document.getElementById('transaction-modal').style.display = 'none';
+                showError((isEnglish ? 'Failed to stake USDT: ' : '质押USDT失败: ') + error.message);
+            }
+        }
+        
+        // 提取USDT函数
+        async function withdrawUSDT() {
+            if (!account) {
+                showError(isEnglish ? 'Please connect your wallet first!' : '请先连接您的钱包!');
+                return;
+            }
+            
+            // 询问提取金额
+            const amount = prompt(isEnglish ? "Please enter the amount of USDT to withdraw:" : "请输入要提取的USDT数量:");
+            if (!amount || amount <= 0) {
+                showError(isEnglish ? "Invalid amount!" : "无效的数量!");
+                return;
+            }
+            
+            try {
+                showTransactionModal(isEnglish ? 'Withdrawing USDT...' : '提取USDT中...');
+                
+                // 将金额转换为wei
+                const amountWei = web3.utils.toWei(amount, 'ether');
+                
+                // 设置足够的gas limit
+                const gasLimit = 50000;
+                
+                // 调用合约方法
+                const transaction = await bullContract.methods.withdrawUSDT(amountWei).send({ 
+                    from: account,
+                    gas: gasLimit
+                });
+                
+                document.getElementById('transaction-modal').style.display = 'none';
+                
+                // 显示交易哈希
+                const txHash = transaction.transactionHash;
+                const explorerUrl = `https://bscscan.com/tx/${txHash}`;
+                const txLink = isEnglish ? 
+                    `Transaction: <a href="${explorerUrl}" target="_blank">${txHash}</a>` : 
+                    `交易: <a href="${explorerUrl}" target="_blank">${txHash}</a>`;
+                
+                document.getElementById('success-hash').innerHTML = txLink;
+                showSuccess(isEnglish ? 'Successfully withdrawn USDT!' : '成功提取USDT!');
+                
+            } catch (error) {
+                document.getElementById('transaction-modal').style.display = 'none';
+                showError((isEnglish ? 'Failed to withdraw USDT: ' : '提取USDT失败: ') + error.message);
+            }
+        }
+        
+        // 计算收益
+        function calculateRewards() {
+            const amount = parseFloat(document.getElementById('stake-amount').value) || 0;
+            const reward = amount * (selectedRate / 100);
+            const total = amount + reward;
+            
+            document.getElementById('reward-amount').textContent = reward.toFixed(2) + ' USDT';
+            document.getElementById('total-amount').textContent = total.toFixed(2) + ' USDT';
+        }
+        
+        // 显示交易模态框
+        function showTransactionModal(message) {
+            document.getElementById('transaction-status').textContent = message;
+            document.getElementById('transaction-modal').style.display = 'flex';
+        }
+        
+        // 显示成功模态框
+        function showSuccess(message) {
+            document.getElementById('success-message').textContent = message;
+            document.getElementById('success-modal').style.display = 'flex';
+        }
+        
+        // 显示错误模态框
+        function showError(message) {
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('error-modal').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
