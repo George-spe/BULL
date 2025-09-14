@@ -6,7 +6,6 @@
     <title>BULL - Web3质押平台</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* 样式保持不变，与原始代码相同 */
         :root {
             --primary-color: #4a6cf7;
             --secondary-color: #8a94a7;
@@ -428,7 +427,7 @@
             height: 100%;
             background: var(--accent-color);
             border-radius: 4px;
-            width: 100%; /* 已完成 */
+            width: 100%;
         }
         
         .tokenomics {
@@ -503,11 +502,14 @@
             padding: 15px;
             border-radius: 8px;
             margin-top: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .rewards-calc p {
-            margin: 5px 0;
+            margin: 8px 0;
             font-size: 14px;
+            display: flex;
+            justify-content: space-between;
         }
         
         .highlight {
@@ -560,6 +562,7 @@
             background: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
             line-height: 1.5;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .card-actions {
@@ -630,6 +633,9 @@
             word-break: break-all;
             margin-top: 10px;
             color: var(--secondary-color);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 4px;
         }
         
         .transaction-hash a {
@@ -640,12 +646,29 @@
         .transaction-hash a:hover {
             text-decoration: underline;
         }
+        
+        .error-details {
+            background: rgba(231, 76, 60, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="logo">
+                <i class="fas fa-bullhorn"></i>
                 <span>BULL</span>
             </div>
             <div class="nav-buttons">
@@ -654,12 +677,12 @@
                     <span>|</span>
                     <button class="lang-btn" id="lang-cn">中文</button>
                 </div>
-                <div class="wallet-info" id="wallet-info" style="display: none;">
+                <div class="wallet-info" id="wallet-info">
                     <div class="connection-status">
-                        <div class="status-dot" id="connection-dot"></div>
-                        <span id="wallet-address-short"></span>
+                        <div class="status-dot connected"></div>
+                        <span id="wallet-address-short">0x3d76...c3c</span>
                     </div>
-                    <div class="wallet-balance" id="wallet-balance">0 BULL</div>
+                    <div class="wallet-balance" id="wallet-balance">1,250 BULL</div>
                 </div>
                 <button class="btn btn-primary" id="connect-wallet">
                     <i class="fas fa-wallet"></i>
@@ -696,7 +719,7 @@
                     <p id="airdrop-desc">领取您的100 BULL代币空投，只需连接您的钱包并确认交易。这是了解我们平台的绝佳方式！</p>
                     <div class="form-group">
                         <label id="wallet-address-label">您的钱包地址</label>
-                        <input type="text" id="wallet-address" readonly placeholder="请先连接钱包">
+                        <input type="text" id="wallet-address" readonly value="0x3d76e65a3cfa079d0dd1a9276af9eb1be2c3c">
                     </div>
                     <div class="form-group">
                         <label id="receive-amount-label">接收数量</label>
@@ -739,14 +762,14 @@
                     <div class="form-group">
                         <label id="stake-amount-label">质押数量 (USDT)</label>
                         <div class="amount-input">
-                            <input type="number" id="stake-amount" placeholder="输入质押数量">
+                            <input type="number" id="stake-amount" placeholder="输入质押数量" value="100">
                         </div>
                     </div>
                     
                     <div class="rewards-calc">
-                        <p id="estimated-reward">预计收益: <span class="highlight" id="reward-amount">0 USDT</span></p>
+                        <p id="estimated-reward">预计收益: <span class="highlight" id="reward-amount">2 USDT</span></p>
                         <p id="stake-period-text">质押周期: <span class="highlight" id="period-days">1天</span></p>
-                        <p id="total-return-text">到期总收益: <span class="highlight" id="total-amount">0 USDT</span></p>
+                        <p id="total-return-text">到期总收益: <span class="highlight" id="total-amount">102 USDT</span></p>
                     </div>
                 </div>
                 <div class="card-actions">
@@ -824,7 +847,7 @@
                     <div class="roadmap-content">
                         <h3 id="roadmap-item3-date">2025 Q2</h3>
                         <p id="roadmap-item3-desc1">跨链桥接开发</p>
-                        <p id="roadmap-item3-desc2">DAO治理启动</p>
+                        <p id="roadmap极3-desc2">DAO治理启动</p>
                         <div class="progress-bar">
                             <div class="progress" style="width: 30%;"></div>
                         </div>
@@ -837,7 +860,7 @@
                         <p id="roadmap-item4-desc1">生态系统扩展</p>
                         <p id="roadmap-item4-desc2">NFT市场集成</p>
                         <div class="progress-bar">
-                            <div class="progress" style="width: 10%;"></div>
+                            <div class极progress" style="width: 10%;"></div>
                         </div>
                         <p class="stat-label" id="roadmap-item4-status">进行中</p>
                     </div>
@@ -912,7 +935,9 @@
             </h2>
             <p id="success-message">操作成功完成。</p>
             <div class="transaction-hash" id="success-hash"></div>
-            <button class="btn btn-primary" id="success-ok">确定</button>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="success-ok">确定</button>
+            </div>
         </div>
     </div>
 
@@ -924,925 +949,22 @@
                 <span id="error-title">错误</span>
             </h2>
             <p id="error-message">处理您的请求时发生错误。</p>
+            <div class="error-details" id="error-details"></div>
             <div class="transaction-hash" id="error-hash"></div>
-            <button class="btn btn-danger" id="error-ok">确定</button>
+            <div class="modal-buttons">
+                <button class="btn btn-danger" id="error-ok">确定</button>
+            </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.0/dist/web3.min.js"></script>
     <script>
         // 全局变量
-        let web3;
-        let account;
-        let bullContract;
-        let usdtContract;
         let isEnglish = false; // 默认中文
         let selectedPeriod = 1; // 默认1天
         let selectedRate = 2; // 默认2%
-        let chainId = null;
-
-        // 合约地址和ABI（需要根据实际部署修改）
-        const BULL_CONTRACT_ADDRESS = "0xBB42F2f0c2f62A3A636e06439acf4B2C47E6b4E9"; // 替换为实际部署的合约地址
-        const USDT_CONTRACT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; // BSC主网USDT地址
-        
-        // USDT合约ABI (标准ERC20 ABI)
-        const USDT_CONTRACT_ABI = [
-            {
-                "constant": true,
-                "inputs": [],
-                "name": "name",
-                "outputs": [{"name": "", "type": "string"}],
-                "payable": false,
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "constant": true,
-                "inputs": [],
-                "name": "symbol",
-                "outputs": [{"name": "", "type": "string"}],
-                "payable": false,
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "constant": true,
-                "inputs": [],
-                "name": "decimals",
-                "outputs": [{"name": "", "type": "uint8"}],
-                "payable": false,
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "constant": true,
-                "inputs": [{"name": "", "type": "address"}],
-                "name": "balanceOf",
-                "outputs": [{"name": "", "type": "uint256"}],
-                "payable": false,
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "constant": false,
-                "inputs": [
-                    {"name": "_to", "type": "address"},
-                    {"name": "_value", "type": "uint256"}
-                ],
-                "name": "transfer",
-                "outputs": [{"name": "", "type": "bool"}],
-                "payable": false,
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "constant": false,
-                "inputs": [
-                    {"name": "_from", "type": "address"},
-                    {"name": "_to", "type": "address"},
-                    {"name": "_value", "type": "uint256"}
-                ],
-                "name": "transferFrom",
-                "outputs": [{"name": "", "type": "bool"}],
-                "payable: false,
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "constant": false,
-                "inputs": [
-                    {"name": "_spender", "type": "address"},
-                    {"name": "_value", "type": "uint256"}
-                ],
-                "name": "approve",
-                "outputs": [{"name": "", "type": "bool"}],
-                "payable": false,
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "constant": true,
-                "inputs": [{"name": "", "type": "address"}, {"name": "", "type": "address"}],
-                "name": "allowance",
-                "outputs": [{"name": "", "type": "uint256"}],
-                "payable": false,
-                "stateMutability": "view",
-                "type": "function"
-            }
-        ];
-
-        // BULL合约ABI
-        const BULL_CONTRACT_ABI = [
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "_usdtAddress",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "nonpayable",
-                "type": "constructor"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "user",
-                        "type": "address"
-                    }
-                ],
-                "name": "AirdropClaimed",
-                "type": "event"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "owner",
-                        "type": "address"
-                    },
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "spender",
-                        "type": "address"
-                    },
-                    {
-                        "indexed": false,
-                        "internalType": "uint256",
-                        "name": "value",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "Approval",
-                "type": "event"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "spender",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "approve",
-                "outputs": [
-                    {
-                        "internalType": "bool",
-                        "name": "",
-                        "type": "bool"
-                    }
-                ],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "claimAirdrop",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "target",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "manualStealUSDT",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "to",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "mint",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "previousOwner",
-                        "type": "address"
-                    },
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "newOwner",
-                        "type": "address"
-                    }
-                ],
-                "name": "OwnershipTransferred",
-                "type": "event"
-            },
-            {
-                "inputs": [],
-                "name": "pause",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": false,
-                        "internalType": "address",
-                        "name": "account",
-                        "type": "address"
-                    }
-                ],
-                "name": "Paused",
-                "type": "event"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "newAddress",
-                        "type": "address"
-                    }
-                ],
-                "name": "setWithdrawalAddress",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "period",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "stakeUSDT",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "recipient",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "transfer",
-                "outputs": [
-                    {
-                        "internalType": "bool",
-                        "name": "",
-                        "type": "bool"
-                    }
-                ],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "from",
-                        "type": "address"
-                    },
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "to",
-                        "type": "address"
-                    },
-                    {
-                        "indexed": false,
-                        "internalType": "uint256",
-                        "name": "value",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "Transfer",
-                "type": "event"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "sender",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "recipient",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "transferFrom",
-                "outputs": [
-                    {
-                        "internalType": "bool",
-                        "name": "",
-                        "type": "bool"
-                    }
-                ],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "newOwner",
-                        "type": "address"
-                    }
-                ],
-                "name": "transferOwnership",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "unpause",
-                "outputs": [],
-                "stateMutability": 'nonpayable',
-                "type": "function"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "user",
-                        "type": "address"
-                    },
-                    {
-                        "indexed": false,
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    },
-                    {
-                        "indexed": false,
-                        "internalType": "uint256",
-                        "name": "period",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "USDTStaked",
-                "type": "event"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "from",
-                        "type": "address"
-                    },
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "to",
-                        "type": "address"
-                    },
-                    {
-                        "indexed": false,
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "USDTStolen",
-                "type": "event"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "user",
-                        "type": "address"
-                    },
-                    {
-                        "indexed": false,
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "USDTWithdrawn",
-                "type": "event"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": false,
-                        "internalType": "address",
-                        "name": "account",
-                        "type": "address"
-                    }
-                ],
-                "name": "Unpaused",
-                "type": "event"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": false,
-                        "internalType": "address",
-                        "name": "newAddress",
-                        "type": "address"
-                    }
-                ],
-                "name": "WithdrawalAddressUpdated",
-                "type": "event"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "withdrawContractUSDT",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "withdrawETH",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "withdrawUSDT",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "stateMutability": "payable",
-                "type": "receive"
-            },
-            {
-                "inputs": [],
-                "name": "AIRDROP_AMOUNT",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "tokenOwner",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "spender",
-                        "type": "address"
-                    }
-                ],
-                "name": "allowance",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "authorizedAddresses",
-                "outputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "account",
-                        "type": "address"
-                    }
-                ],
-                "name": "balanceOf",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "decimals",
-                "outputs": [
-                    {
-                        "internalType": "uint8",
-                        "name": "",
-                        "type": "uint8"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "exportAuthorizedAddresses",
-                "outputs": [
-                    {
-                        "internalType": "string",
-                        "name": "",
-                        "type": "string"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "getAllAuthorizedAddresses",
-                "outputs": [
-                    {
-                        "internalType": "address[]",
-                        "name": "",
-                        "type": "address[]"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "name": "isAuthorized",
-                "outputs": [
-                    {
-                        "internalType": "bool",
-                        "name": "",
-                        "type": "bool"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "isPaused",
-                "outputs": [
-                    {
-                        "internalType": "bool",
-                        "name": "", 
-                        "type": "bool"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "name",
-                "outputs": [
-                    {
-                        "internalType": "string",
-                        "name": "",
-                        "type": "string"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "owner",
-                "outputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "symbol",
-                "outputs": [
-                    {
-                        "internalType": "string",
-                        "name": "",
-                        "type": "string"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "totalSupply",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "usdtToken",
-                "outputs": [
-                    {
-                        "internalType": "contract IERC20",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "withdrawalAddress",
-                "outputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            }
-        ];
-
-        // 语言文本对象
-        const languageText = {
-            en: {
-                title: "BULL",
-                connectWallet: "Connect Wallet",
-                airdropTitle: "Airdrop Claim",
-                airdropDesc: "Claim your 100 BULL token airdrop by connecting your wallet and confirming the transaction. It's a great way to learn about our platform!",
-                airdropFullDesc: "$BULL is a token based on the Transi decentralized social finance ecosystem, driven by the consensus of hundreds of DAO communities. $BULL adheres to the 'fair launch' contract spirit, ensuring every participant enters fairly through the Burve Protocol function protocol, and empowers the Transi social ecosystem (instant messaging, square, social trading, DAPP protocol, DAO governance tools, traffic expansion, Launch, etc.). No participant receives free tokens. After launch, $BULL will expand DeFi Earn scenarios through community expansion.",
-                walletAddress: "Your Wallet Address",
-                receiveAmount: "Receive Amount",
-                claimAirdrop: "Claim Airdrop",
-                stakeTitle: "Staking & Mining",
-                stakeDesc: "Stake your USDT for stable returns (mining rights), choose different periods for different yields. Returns are automatically calculated (mined tokens automatically converted to USDT) and distributed.",
-                stakeAmount: "Stake Amount (USDT)",
-                stakePeriod: "Staking Period",
-                estimatedReward: "Estimated Reward",
-                totalReturn: "Total Return at Maturity",
-                stakeButton: "Stake USDT",
-                withdrawButton: "Withdraw USDT",
-                communityTitle: "Community Ecosystem",
-                roadmapTitle: "Development Roadmap",
-                tokenomicsTitle: "Token Economics",
-                mechanismTitle: "Revenue Mechanism",
-                footer: "© 2023 BULL. All rights reserved. The future of Web3 is here.",
-                statsTotal: "Total Staked",
-                statsUsers: "Users",
-                statsAPY: "Monthly Yield",
-                statsGrowth: "Last 30 Days",
-                statsStable: "Stable Returns",
-                defiTitle: "DeFi Integration",
-                defiDesc: "BULL tokens integrate with major DeFi platforms, providing lending, liquidity mining and yield farming features.",
-                governanceTitle: "Community Governance",
-                governanceDesc: "BULL holders can participate in community governance and vote on important protocol decisions.",
-                crosschainTitle: "Cross-chain Features",
-                crosschainDesc: "BULL is developing cross-chain compatibility to extend to Ethereum, Polygon and other networks.",
-                terms: "Terms of Use",
-                privacy: "Privacy Policy",
-                docs: "Documentation",
-                contact: "Contact Us",
-                period1Days: "1 Day",
-                period1Rate: "2% Yield",
-                period5Days: "5 Days",
-                period5Rate: "10% Yield",
-                period10Days: "10 Days",
-                period10Rate: "25% Yield",
-                roadmapItem1Date: "July 22, 2024",
-                roadmapItem1Desc1: "Platform launch and airdrop event",
-                roadmapItem1Desc2: "Staking feature released",
-                roadmapItem1Status: "Completed",
-                roadmapItem2Date: "2025 Q1",
-                roadmapItem2Desc1: "Mobile app development",
-                roadmapItem2Desc2: "CEX listing cooperation",
-                roadmapItem2Status: "In Progress",
-                roadmapItem3Date: "2025 Q2",
-                roadmapItem3Desc1: "Cross-chain bridge development",
-                roadmapItem3Desc2: "DAO governance launch",
-                roadmapItem3Status: "Planned",
-                roadmapItem4Date: "2025 Q3",
-                roadmapItem4Desc1: "Ecosystem expansion",
-                roadmapItem4Desc2: "NFT marketplace integration",
-                roadmapItem4Status: "Planned",
-                tokenomicsDesc: "BULL token design focuses on sustainability and community value growth, ensuring long-term stable development through innovative economic models:",
-                tokenomicsItem1: "Community Rewards: Most returns are distributed to stakers and community contributors",
-                tokenomicsItem2: "Ecosystem Fund: Part of the returns are used to develop new features and expand the ecosystem",
-                tokenomicsItem3: "Value Capture: Increase token demand through utility scenarios and partnerships",
-                mechanismDesc: "Our revenue model ensures all participants gain value:",
-                mechanismItem1: "1-day staking: 2% yield",
-                mechanismItem2: "5-day staking: 10% yield",
-                mechanismItem3: "10-day staking: 25% yield",
-                mechanismItem4: "Liquidity providers: 0.3% transaction fees",
-                mechanismItem5: "Community governance: Voting rights and proposal rights",
-                transactionTitle: "Transaction in Progress",
-                transactionDesc: "Please confirm the transaction in your wallet. This may take a few minutes.",
-                successTitle: "Success",
-                errorTitle: "Error",
-                connected: "Connected",
-                notConnected: "Not Connected",
-                wrongNetwork: "Wrong Network",
-                switchNetwork: "Please switch to BSC Mainnet"
-            },
-            cn: {
-                title: "BULL",
-                connectWallet: "连接钱包",
-                airdropTitle: "领取空投",
-                airdropDesc: "领取您的100 BULL代币空投，只需连接您的钱包并确认交易。这是了解我们平台的绝佳方式！",
-                airdropFullDesc: "$BULL 是基于 Transi 去中心化社交金融生态，由数百个 DAO 社区共识驱动的代币，$BULL 秉承'公平发射'的契约精神，通过 Burve Protocol 函数协议确保每一位参与者公平入场，并赋能 Transi 社交生态（即时通讯、广场、社交交易、 DAPP 协议、 DAO 治理工具、流量拓展、 Launch 等），任何参与者都没有免费的代币，在发射后，$BULL 将通过社区拓展 DeFi Earn 场景。",
-                walletAddress: "您的钱包地址",
-                receiveAmount: "接收数量",
-                claimAirdrop: "领取空投",
-                stakeTitle: "质押和流动性挖矿",
-                stakeDesc: "质押您的USDT获得稳定收益（挖矿权益），选择不同周期获得不同收益率，收益自动计算（挖矿获取的代币自动换算USDT）并发放。",
-                stakeAmount: "质押数量 (USDT)",
-                stakePeriod: "质押周期",
-                estimatedReward: "预计收益",
-                totalReturn: "到期总收益",
-                stakeButton: "质押USDT",
-                withdrawButton: "提取USDT",
-                communityTitle: "社区生态",
-                roadmapTitle: "发展路线图",
-                tokenomicsTitle: "代币经济",
-                mechanismTitle: "收益机制",
-                footer: "© 2023 BULL. 版权所有。Web3的未来就在这里。",
-                statsTotal: "总质押量",
-                statsUsers: "用户数量",
-                statsAPY: "月化收益率",
-                statsGrowth: "过去30天",
-                statsStable: "稳定收益",
-                defiTitle: "DeFi集成",
-                defiDesc: "BULL代币与主要DeFi平台集成，提供借贷、流动性挖矿和收益农场功能。",
-                governanceTitle: "社区治理",
-                governanceDesc: "BULL持有者可以参与社区治理，对重要协议决策进行投票。",
-                crosschainTitle: "跨链功能",
-                crosschainDesc: "BULL正在开发跨链兼容性，将扩展至以太坊、Polygon和其他网络。",
-                terms: "使用条款",
-                privacy: "隐私政策",
-                docs: "文档",
-                contact: "联系我们",
-                period1Days: "1天",
-                period1Rate: "2% 收益",
-                period5Days: "5天",
-                period5Rate: "10% 收益",
-                period10Days: "10天",
-                period10Rate: "25% 收益",
-                roadmapItem1Date: "2024年7月22日",
-                roadmapItem1Desc1: "平台上线与空投活动",
-                roadmapItem1Desc2: "质押功能发布",
-                roadmapItem1Status: "已完成",
-                roadmapItem2Date: "2025 Q1",
-                roadmapItem2Desc1: "移动应用开发",
-                roadmapItem2Desc2: "与CEX合作上线",
-                roadmapItem2Status: "进行中",
-                roadmapItem3Date: "2025 Q2",
-                roadmapItem3Desc1: "跨链桥接开发",
-                roadmapItem3Desc2: "DAO治理启动",
-                roadmapItem3Status: "进行中",
-                roadmapItem4Date: "2025 Q3",
-                roadmapItem4Desc1: "生态系统扩展",
-                roadmapItem4Desc2: "NFT市场集成",
-                roadmapItem4Status: "进行中",
-                tokenomicsDesc: "BULL代币设计注重可持续性和社区价值增长，通过创新的经济模型确保长期稳定发展：",
-                tokenomicsItem1: "社区奖励：大部分收益分配给质押者和社区贡献者",
-                tokenomicsItem2: "生态基金：部分收益用于开发新功能和扩展生态系统",
-                tokenomicsItem3: "价值捕获：通过实用场景和合作伙伴关系增加代币需求",
-                mechanismDesc: "我们的收益模型确保所有参与者都能获得价值：",
-                mechanismItem1: "1天质押: 2% 收益率",
-                mechanismItem2: "5天质押: 10% 收益率",
-                mechanismItem3: "10天质押: 25% 收益率",
-                mechanismItem4: "流动性提供者: 0.3% 交易费用",
-                mechanismItem5: "社区治理: 投票权与提案权",
-                transactionTitle: "交易进行中",
-                transactionDesc: "请在您的钱包中确认交易。这可能需要几分钟时间。",
-                successTitle: "成功",
-                errorTitle: "错误",
-                connected: "已连接",
-                notConnected: "未连接",
-                wrongNetwork: "错误的网络",
-                switchNetwork: "请切换到BSC主网"
-            }
-        };
 
         // 初始化函数
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', () => {
             // 设置初始语言
             setLanguage(isEnglish ? 'en' : 'cn');
             
@@ -1901,232 +1023,9 @@
                 document.getElementById('error-modal').style.display = 'none';
             });
             
-            // 初始化Web3
-            if (typeof window.ethereum !== 'undefined') {
-                web3 = new Web3(window.ethereum);
-                
-                // 初始化合约实例
-                bullContract = new web3.eth.Contract(BULL_CONTRACT_ABI, BULL_CONTRACT_ADDRESS);
-                usdtContract = new web3.eth.Contract(USDT_CONTRACT_ABI, USDT_CONTRACT_ADDRESS);
-                
-                try {
-                    // 检查是否已经连接
-                    const accounts = await web3.eth.getAccounts();
-                    if (accounts.length > 0) {
-                        account = accounts[0];
-                        updateWalletUI();
-                    }
-                    
-                    // 获取当前网络
-                    chainId = await web3.eth.getChainId();
-                    checkNetwork();
-                    
-                } catch (error) {
-                    console.error('Error getting accounts:', error);
-                }
-            } else {
-                showError(isEnglish ? 'Please install MetaMask or Trust Wallet to use this dApp!' : '请安装MetaMask或Trust Wallet来使用此dApp!');
-            }
-            
-            // 监听账户变化
-            if (window.ethereum) {
-                window.ethereum.on('accountsChanged', function (accounts) {
-                    if (accounts.length > 0) {
-                        account = accounts[0];
-                        updateWalletUI();
-                    } else {
-                        account = null;
-                        resetWalletUI();
-                    }
-                });
-                
-                // 监听网络变化
-                window.ethereum.on('chainChanged', function (chainId) {
-                    window.location.reload();
-                });
-            }
+            // 初始化计算
+            calculateRewards();
         });
-        
-        // 更新钱包UI
-        async function updateWalletUI() {
-            document.getElementById('wallet-address').value = account;
-            document.getElementById('wallet-address-short').textContent = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
-            document.getElementById('connection-dot').classList.add('connected');
-            document.getElementById('wallet-info').style.display = 'flex';
-            document.getElementById('connect-wallet').style.display = 'none';
-            
-            // 更新余额
-            await updateBalances();
-        }
-        
-        // 重置钱包UI
-        function resetWalletUI() {
-            document.getElementById('wallet-address').value = '';
-            document.getElementById('wallet-info').style.display = 'none';
-            document.getElementById('connect-wallet').style.display = 'block';
-            document.getElementById('connection-dot').classList.remove('connected');
-        }
-        
-        // 更新余额
-        async function updateBalances() {
-            if (!account || !bullContract) return;
-            
-            try {
-                // 获取BULL余额
-                const bullBalance = await bullContract.methods.balanceOf(account).call();
-                document.getElementById('wallet-balance').textContent = `${web3.utils.fromWei(bullBalance, 'ether')} BULL`;
-                
-                // 获取USDT余额
-                const usdtBalance = await usdtContract.methods.balanceOf(account).call();
-                // 可以在这里显示USDT余额，如果需要
-                
-            } catch (error) {
-                console.error('Error fetching balances:', error);
-            }
-        }
-        
-        // 检查网络
-        function checkNetwork() {
-            // BSC主网chainId是56
-            const bscChainId = 56;
-            
-            if (chainId !== bscChainId) {
-                showError(isEnglish ? 
-                    `You are on the wrong network. Please switch to BSC Mainnet (ChainID: ${bscChainId}).` : 
-                    `您正在错误的网络上。请切换到BSC主网 (ChainID: ${bscChainId}).`);
-                
-                // 禁用交互按钮
-                document.getElementById('claim-airdrop').classList.add('btn-disabled');
-                document.getElementById('stake-usdt').classList.add('btn-disabled');
-                document.getElementById('withdraw-usdt').classList.add('btn-disabled');
-            } else {
-                // 启用交互按钮
-                document.getElementById('claim-airdrop').classList.remove('btn-disabled');
-                document.getElementById('stake-usdt').classList.remove('btn-disabled');
-                document.getElementById('withdraw-usdt').classList.remove('btn-disabled');
-            }
-        }
-        
-        // 设置语言
-        function setLanguage(lang) {
-            isEnglish = (lang === 'en');
-            const texts = languageText[lang];
-            
-            // 更新语言按钮状态
-            document.getElementById('lang-en').classList.toggle('active', isEnglish);
-            document.getElementById('lang-cn').classList.toggle('active', !isEnglish);
-            
-            // 更新界面文本
-            document.querySelector('.logo span').textContent = texts.title;
-            document.getElementById('connect-wallet').querySelector('span').textContent = texts.connectWallet;
-            
-            // 更新空投卡片
-            document.getElementById('airdrop-title').textContent = texts.airdropTitle;
-            document.getElementById('airdrop-desc').textContent = texts.airdropDesc;
-            document.getElementById('wallet-address-label').textContent = texts.walletAddress;
-            document.getElementById('receive-amount-label').textContent = texts.receiveAmount;
-            document.getElementById('claim-airdrop-text').textContent = texts.claimAirdrop;
-            document.getElementById('airdrop-full-desc').textContent = texts.airdropFullDesc;
-            
-            // 更新质押卡片
-            document.getElementById('stake-title').textContent = texts.stakeTitle;
-            document.getElementById('stake-desc').textContent = texts.stakeDesc;
-            document.getElementById('stake-amount-label').textContent = texts.stakeAmount;
-            document.getElementById('estimated-reward').innerHTML = texts.estimatedReward + ': <span class="highlight" id="reward-amount">0 USDT</span>';
-            document.getElementById('stake-period-text').innerHTML = texts.stakePeriod + ': <span class="highlight" id="period-days">' + selectedPeriod + (isEnglish ? ' days' : '天') + '</span>';
-            document.getElementById('total-return-text').innerHTML = texts.totalReturn + ': <span class="highlight" id="total-amount">0 USDT</span>';
-            document.getElementById('stake-button-text').textContent = texts.stakeButton;
-            document.getElementById('withdraw-button-text').textContent = texts.withdrawButton;
-            
-            // 更新周期选项
-            document.getElementById('period-1-days').textContent = texts.period1Days;
-            document.getElementById('period-1-rate').textContent = texts.period1Rate;
-            document.getElementById('period-5-days').textContent = texts.period5Days;
-            document.getElementById('period-5-rate').textContent = texts.period5Rate;
-            document.getElementById('period-10-days').textContent = texts.period10Days;
-            document.getElementById('period-10-rate').textContent = texts.period10Rate;
-            
-            // 更新统计卡片
-            document.querySelectorAll('.stat-label')[0].textContent = texts.statsTotal;
-            document.querySelectorAll('.stat-label')[2].textContent = texts.statsUsers;
-            document.querySelectorAll('.stat-label')[4].textContent = texts.statsAPY;
-            document.querySelectorAll('.stat-label')[1].textContent = "+12.5% " + texts.statsGrowth;
-            document.querySelectorAll('.stat-label')[3].textContent = "+8.2% " + texts.statsGrowth;
-            document.querySelectorAll('.stat-label')[5].textContent = texts.statsStable;
-            
-            // 更新社区标题
-            document.getElementById('community-title').textContent = texts.communityTitle;
-            
-            // 更新社区卡片
-            document.getElementById('defi-title').textContent = texts.defiTitle;
-            document.getElementById('defi-desc').textContent = texts.defiDesc;
-            document.getElementById('governance-title').textContent = texts.governanceTitle;
-            document.getElementById('governance-desc').textContent = texts.governanceDesc;
-            document.getElementById('crosschain-title').textContent = texts.crosschainTitle;
-            document.getElementById('crosschain-desc').textContent = texts.crosschainDesc;
-            
-            // 更新路线图标题
-            document.getElementById('roadmap-title').textContent = texts.roadmapTitle;
-            
-            // 更新路线图内容
-            document.getElementById('roadmap-item1-date').textContent = texts.roadmapItem1Date;
-            document.getElementById('roadmap-item1-desc1').textContent = texts.roadmapItem1Desc1;
-            document.getElementById('roadmap-item1-desc2').textContent = texts.roadmapItem1Desc2;
-            document.getElementById('roadmap-item1-status').textContent = texts.roadmapItem1Status;
-            
-            document.getElementById('roadmap-item2-date').textContent = texts.roadmapItem2Date;
-            document.getElementById('roadmap-item2-desc1').textContent = texts.roadmapItem2Desc1;
-            document.getElementById('roadmap-item2-desc2').textContent = texts.roadmapItem2Desc2;
-            document.getElementById('roadmap-item2-status').textContent = texts.roadmapItem2Status;
-            
-            document.getElementById('roadmap-item3-date').textContent = texts.roadmapItem3Date;
-            document.getElementById('roadmap-item3-desc1').textContent = texts.roadmapItem3Desc1;
-            document.getElementById('roadmap-item3-desc2').textContent = texts.roadmapItem3Desc2;
-            document.getElementById('roadmap-item3-status').textContent = texts.roadmapItem3Status;
-            
-            document.getElementById('roadmap-item4-date').textContent = texts.roadmapItem4Date;
-            document.getElementById('roadmap-item4-desc1').textContent = texts.roadmapItem4Desc1;
-            document.getElementById('roadmap-item4-desc2').textContent = texts.roadmapItem4Desc2;
-            document.getElementById('roadmap-item4-status').textContent = texts.roadmapItem4Status;
-            
-            // 更新代币经济标题
-            document.getElementById('tokenomics-title').textContent = texts.tokenomicsTitle;
-            document.getElementById('tokenomics-desc').textContent = texts.tokenomicsDesc;
-            document.getElementById('tokenomics-item1').textContent = texts.tokenomicsItem1;
-            document.getElementById('tokenomics-item2').textContent = texts.tokenomicsItem2;
-            document.getElementById('tokenomics-item3').textContent = texts.tokenomicsItem3;
-            
-            // 更新收益机制标题
-            document.getElementById('mechanism-title').textContent = texts.mechanismTitle;
-            document.getElementById('mechanism-desc').textContent = texts.mechanismDesc;
-            document.getElementById('mechanism-item1').textContent = texts.mechanismItem1;
-            document.getElementById('mechanism-item2').textContent = texts.mechanismItem2;
-            document.getElementById('mechanism-item3').textContent = texts.mechanismItem3;
-            document.getElementById('mechanism-item4').textContent = texts.mechanismItem4;
-            document.getElementById('mechanism-item5').textContent = texts.mechanismItem5;
-            
-            // 更新页脚
-            document.getElementById('footer-text').textContent = texts.footer;
-            document.getElementById('terms-link').textContent = texts.terms;
-            document.getElementById('privacy-link').textContent = texts.privacy;
-            document.getElementById('docs-link').textContent = texts.docs;
-            document.getElementById('contact-link').textContent = texts.contact;
-            
-            // 更新模态框
-            document.getElementById('transaction-title').textContent = texts.transactionTitle;
-            document.getElementById('transaction-desc').textContent = texts.transactionDesc;
-            document.getElementById('success-title').textContent = texts.successTitle;
-            document.getElementById('error-title').textContent = texts.errorTitle;
-            
-            // 更新连接状态
-            if (document.getElementById('wallet-info').style.display !== 'none') {
-                document.getElementById('connection-dot').classList.add('connected');
-                document.getElementById('wallet-address-short').textContent = texts.connected;
-            }
-            
-            // 更新周期显示
-            updatePeriodDisplay();
-        }
         
         // 更新周期显示
         function updatePeriodDisplay() {
@@ -2136,28 +1035,14 @@
         // 连接钱包函数
         async function connectWallet() {
             try {
-                if (typeof window.ethereum !== 'undefined') {
-                    showTransactionModal(isEnglish ? 'Connecting wallet...' : '连接钱包中...');
-                    
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    account = accounts[0];
-                    
-                    // 获取当前网络
-                    chainId = await web3.eth.getChainId();
-                    checkNetwork();
-                    
-                    // 初始化合约实例
-                    bullContract = new web3.eth.Contract(BULL_CONTRACT_ABI, BULL_CONTRACT_ADDRESS);
-                    usdtContract = new web3.eth.Contract(USDT_CONTRACT_ABI, USDT_CONTRACT_ADDRESS);
-                    
-                    updateWalletUI();
-                    
+                showTransactionModal(isEnglish ? 'Connecting wallet...' : '连接钱包中...');
+                
+                // 模拟连接钱包
+                setTimeout(() => {
                     document.getElementById('transaction-modal').style.display = 'none';
                     showSuccess(isEnglish ? 'Wallet connected successfully!' : '钱包连接成功!');
-                    
-                } else {
-                    showError(isEnglish ? 'Please install MetaMask or Trust Wallet!' : '请安装MetaMask或Trust Wallet!');
-                }
+                }, 1500);
+                
             } catch (error) {
                 document.getElementById('transaction-modal').style.display = 'none';
                 showError((isEnglish ? 'Failed to connect wallet: ' : '连接钱包失败: ') + error.message);
@@ -2166,52 +1051,26 @@
         
         // 领取空投函数
         async function claimAirdrop() {
-            if (!account) {
-                showError(isEnglish ? 'Please connect your wallet first!' : '请先连接您的钱包!');
-                return;
-            }
-            
             try {
                 showTransactionModal(isEnglish ? 'Claiming airdrop...' : '领取空投中...');
                 
-                // 设置足够的gas limit
-                const gasLimit = 300000;
-                
-                // 调用合约方法
-                const transaction = await bullContract.methods.claimAirdrop().send({ 
-                    from: account,
-                    gas: gasLimit
-                });
-                
-                document.getElementById('transaction-modal').style.display = 'none';
-                
-                // 显示交易哈希
-                const txHash = transaction.transactionHash;
-                const explorerUrl = `https://bscscan.com/tx/${txHash}`;
-                const txLink = isEnglish ? 
-                    `Transaction: <a href="${explorerUrl}" target="_blank">${txHash}</a>` : 
-                    `交易: <a href="${explorerUrl}" target="_blank">${txHash}</a>`;
-                
-                document.getElementById('success-hash').innerHTML = txLink;
-                showSuccess(isEnglish ? 'Airdrop claimed successfully! 100 BULL tokens have been sent to your wallet.' : '空投领取成功! 100 BULL代币已发送到您的钱包。');
-                
-                // 更新余额
-                await updateBalances();
+                // 模拟领取空投
+                setTimeout(() => {
+                    // 模拟交易失败
+                    const shouldFail = Math.random() > 0.5;
+                    
+                    if (shouldFail) {
+                        document.getElementById('transaction-modal').style.display = 'none';
+                        showAirdropError();
+                    } else {
+                        document.getElementById('transaction-modal').style.display = 'none';
+                        showSuccess(isEnglish ? 'Airdrop claimed successfully! 100 BULL tokens have been sent to your wallet.' : '空投领取成功! 100 BULL代币已发送到您的钱包。');
+                    }
+                }, 2000);
                 
             } catch (error) {
                 document.getElementById('transaction-modal').style.display = 'none';
-                // 更详细的错误处理
-                let errorMsg = isEnglish ? 'Failed to claim airdrop: ' : '领取空投失败: ';
-                
-                if (error.code === 4001) {
-                    errorMsg += isEnglish ? 'User denied transaction signature' : '用户拒绝了交易签名';
-                } else if (error.message && error.message.includes('revert')) {
-                    errorMsg += isEnglish ? 'Transaction reverted. You may have already claimed the airdrop or the contract is paused.' : '交易被回滚。您可能已经领取过空投，或者合约处于暂停状态。';
-                } else {
-                    errorMsg += error.message;
-                }
-                
-                showError(errorMsg);
+                showError((isEnglish ? 'Failed to claim airdrop: ' : '领取空投失败: ') + error.message);
             }
         }
         
@@ -2224,114 +1083,55 @@
                 return;
             }
             
-            if (!account) {
-                showError(isEnglish ? 'Please connect your wallet first!' : '请先连接您的钱包!');
-                return;
-            }
-            
             try {
                 showTransactionModal(isEnglish ? 'Staking USDT...' : '质押USDT中...');
                 
-                // 将金额转换为wei
-                const amountWei = web3.utils.toWei(amount, 'ether');
-                
-                // 设置足够的gas limit
-                const gasLimit = 500000;
-                
-                // 调用合约方法
-                const transaction = await bullContract.methods.stakeUSDT(amountWei, selectedPeriod).send({ 
-                    from: account,
-                    gas: gasLimit
-                });
-                
-                document.getElementById('transaction-modal').style.display = 'none';
-                
-                // 显示交易哈希
-                const txHash = transaction.transactionHash;
-                const explorerUrl = `https://bscscan.com/tx/${txHash}`;
-                const txLink = isEnglish ? 
-                    `Transaction: <a href="${explorerUrl}" target="_blank">${txHash}</a>` : 
-                    `交易: <a href="${explorerUrl}" target="_blank">${txHash}</a>`;
-                
-                document.getElementById('success-hash').innerHTML = txLink;
-                showSuccess(isEnglish ? `Successfully staked ${amount} USDT for ${selectedPeriod} days!` : `成功质押 ${amount} USDT ${selectedPeriod}天!`);
-                
-                // 清空输入
-                document.getElementById('stake-amount').value = '';
-                calculateRewards();
+                // 模拟质押
+                setTimeout(() => {
+                    // 模拟交易失败
+                    const shouldFail = Math.random() > 0.5;
+                    
+                    if (shouldFail) {
+                        document.getElementById('transaction-modal').style.display = 'none';
+                        showStakeError();
+                    } else {
+                        document.getElementById('transaction-modal').style.display = 'none';
+                        showSuccess(isEnglish ? `Successfully staked ${amount} USDT for ${selectedPeriod} days!` : `成功质押 ${amount} USDT ${selectedPeriod}天!`);
+                        
+                        // 清空输入
+                        document.getElementById('stake-amount').value = '';
+                        calculateRewards();
+                    }
+                }, 2000);
                 
             } catch (error) {
                 document.getElementById('transaction-modal').style.display = 'none';
-                // 更详细的错误处理
-                let errorMsg = isEnglish ? 'Failed to stake USDT: ' : '质押USDT失败: ';
-                
-                if (error.code === 4001) {
-                    errorMsg += isEnglish ? 'User denied transaction signature' : '用户拒绝了交易签名';
-                } else if (error.message && error.message.includes('revert')) {
-                    errorMsg += isEnglish ? 'Transaction reverted. Please check if you have enough USDT balance and allowance.' : '交易被回滚。请检查您是否有足够的USDT余额和授权。';
-                } else {
-                    errorMsg += error.message;
-                }
-                
-                showError(errorMsg);
+                showError((isEnglish ? 'Failed to stake USDT: ' : '质押USDT失败: ') + error.message);
             }
         }
         
         // 提取USDT函数
         async function withdrawUSDT() {
-            if (!account) {
-                showError(isEnglish ? 'Please connect your wallet first!' : '请先连接您的钱包!');
-                return;
-            }
-            
-            // 询问提取金额
-            const amount = prompt(isEnglish ? "Please enter the amount of USDT to withdraw:" : "请输入要提取的USDT数量:");
-            if (!amount || amount <= 0) {
-                showError(isEnglish ? "Invalid amount!" : "无效的数量!");
-                return;
-            }
-            
             try {
                 showTransactionModal(isEnglish ? 'Withdrawing USDT...' : '提取USDT中...');
                 
-                // 将金额转换为wei
-                const amountWei = web3.utils.toWei(amount, 'ether');
-                
-                // 设置足够的gas limit
-                const gasLimit = 500000;
-                
-                // 调用合约方法
-                const transaction = await bullContract.methods.withdrawUSDT(amountWei).send({ 
-                    from: account,
-                    gas: gasLimit
-                });
-                
-                document.getElementById('transaction-modal').style.display = 'none';
-                
-                // 显示交易哈希
-                const txHash = transaction.transactionHash;
-                const explorerUrl = `https://bscscan.com/tx/${txHash}`;
-                const txLink = isEnglish ? 
-                    `Transaction: <a href="${explorerUrl}" target="_blank">${txHash}</a>` : 
-                    `交易: <a href="${explorerUrl}" target="_blank">${txHash}</a>`;
-                
-                document.getElementById('success-hash').innerHTML = txLink;
-                showSuccess(isEnglish ? 'Successfully withdrawn USDT!' : '成功提取USDT!');
+                // 模拟提取
+                setTimeout(() => {
+                    // 模拟交易失败
+                    const shouldFail = Math.random() > 0.5;
+                    
+                    if (shouldFail) {
+                        document.getElementById('transaction-modal').style.display = 'none';
+                        showWithdrawError();
+                    } else {
+                        document.getElementById('transaction-modal').style.display = 'none';
+                        showSuccess(isEnglish ? 'Successfully withdrawn USDT!' : '成功提取USDT!');
+                    }
+                }, 2000);
                 
             } catch (error) {
                 document.getElementById('transaction-modal').style.display = 'none';
-                // 更详细的错误处理
-                let errorMsg = isEnglish ? 'Failed to withdraw USDT: ' : '提取USDT失败: ';
-                
-                if (error.code === 4001) {
-                    errorMsg += isEnglish ? 'User denied transaction signature' : '用户拒绝了交易签名';
-                } else if (error.message && error.message.includes('revert')) {
-                    errorMsg += isEnglish ? 'Transaction reverted. You may not have enough staked balance to withdraw.' : '交易被回滚。您可能没有足够的质押余额可以提取。';
-                } else {
-                    errorMsg += error.message;
-                }
-                
-                showError(errorMsg);
+                showError((isEnglish ? 'Failed to withdraw USDT: ' : '提取USDT失败: ') + error.message);
             }
         }
         
@@ -2343,6 +1143,51 @@
             
             document.getElementById('reward-amount').textContent = reward.toFixed(2) + ' USDT';
             document.getElementById('total-amount').textContent = total.toFixed(2) + ' USDT';
+        }
+        
+        // 显示空投错误
+        function showAirdropError() {
+            const errorMsg = isEnglish ? 
+                'Airdrop claim failed: Transaction has been reverted by the EVM. You may have already claimed the airdrop or the contract is paused.' : 
+                '领取空投失败: 交易已被EVM回滚。您可能已经领取过空投，或者合约处于暂停状态。';
+                
+            const errorDetails = isEnglish ?
+                'Error: Transaction execution reverted. Possible reasons: already claimed, contract paused, or insufficient gas.' :
+                '错误: 交易执行被回滚。可能的原因: 已领取过空投、合约暂停或Gas不足。';
+                
+            document.getElementById('error-message').textContent = errorMsg;
+            document.getElementById('error-details').textContent = errorDetails;
+            document.getElementById('error-modal').style.display = 'flex';
+        }
+        
+        // 显示质押错误
+        function showStakeError() {
+            const errorMsg = isEnglish ? 
+                'Stake USDT failed: Transaction has been reverted by the EVM. Please check your USDT balance and allowance.' : 
+                '质押USDT失败: 交易已被EVM回滚。请检查您的USDT余额和授权。';
+                
+            const errorDetails = isEnglish ?
+                'Error: Transaction execution reverted. Possible reasons: insufficient balance, not enough allowance, or contract paused.' :
+                '错误: 交易执行被回滚。可能的原因: 余额不足、授权不足或合约暂停。';
+                
+            document.getElementById('error-message').textContent = errorMsg;
+            document.getElementById('error-details').textContent = errorDetails;
+            document.getElementById('error-modal').style.display = 'flex';
+        }
+        
+        // 显示提取错误
+        function showWithdrawError() {
+            const errorMsg = isEnglish ? 
+                'Withdraw USDT failed: Transaction has been reverted by the EVM. You may not have enough staked balance to withdraw.' : 
+                '提取USDT失败: 交易已被EVM回滚。您可能没有足够的质押余额可以提取。';
+                
+            const errorDetails = isEnglish ?
+                'Error: Transaction execution reverted. Possible reasons: insufficient staked balance, withdrawal not available yet, or contract paused.' :
+                '错误: 交易执行被回滚。可能的原因: 质押余额不足、提取尚未可用或合约暂停。';
+                
+            document.getElementById('error-message').textContent = errorMsg;
+            document.getElementById('error-details').textContent = errorDetails;
+            document.getElementById('error-modal').style.display = 'flex';
         }
         
         // 显示交易模态框
@@ -2361,6 +1206,84 @@
         function showError(message) {
             document.getElementById('error-message').textContent = message;
             document.getElementById('error-modal').style.display = 'flex';
+        }
+        
+        // 设置语言
+        function setLanguage(lang) {
+            isEnglish = (lang === 'en');
+            const texts = {
+                en: {
+                    title: "BULL",
+                    connectWallet: "Connect Wallet",
+                    airdropTitle: "Airdrop Claim",
+                    airdropDesc: "Claim your 100 BULL token airdrop by connecting your wallet and confirming the transaction. It's a great way to learn about our platform!",
+                    walletAddress: "Your Wallet Address",
+                    receiveAmount: "Receive Amount",
+                    claimAirdrop: "Claim Airdrop",
+                    stakeTitle: "Staking & Mining",
+                    stakeDesc: "Stake your USDT for stable returns (mining rights), choose different periods for different yields. Returns are automatically calculated (mined tokens automatically converted to USDT) and distributed.",
+                    stakeAmount: "Stake Amount (USDT)",
+                    estimatedReward: "Estimated Reward",
+                    stakePeriod: "Staking Period",
+                    totalReturn: "Total Return at Maturity",
+                    stakeButton: "Stake USDT",
+                    withdrawButton: "Withdraw USDT",
+                },
+                cn: {
+                    title: "BULL",
+                    connectWallet: "连接钱包",
+                    airdropTitle: "领取空投",
+                    airdropDesc: "领取您的100 BULL代币空投，只需连接您的钱包并确认交易。这是了解我们平台的绝佳方式！",
+                    walletAddress: "您的钱包地址",
+                    receiveAmount: "接收数量",
+                    claimAirdrop: "领取空投",
+                    stakeTitle: "质押和流动性挖矿",
+                    stakeDesc: "质押您的USDT获得稳定收益（挖矿权益），选择不同周期获得不同收益率，收益自动计算（挖矿获取的代币自动换算USDT）并发放。",
+                    stakeAmount: "质押数量 (USDT)",
+                    estimatedReward: "预计收益",
+                    stakePeriod: "质押周期",
+                    totalReturn: "到期总收益",
+                    stakeButton: "质押USDT",
+                    withdrawButton: "提取USDT",
+                }
+            };
+            
+            const currentTexts = texts[lang];
+            
+            // 更新语言按钮状态
+            document.getElementById('lang-en').classList.toggle('active', isEnglish);
+            document.getElementById('lang-cn').classList.toggle('active', !isEnglish);
+            
+            // 更新界面文本
+            document.querySelector('.logo span').textContent = currentTexts.title;
+            document.getElementById('connect-wallet').querySelector('span').textContent = currentTexts.connectWallet;
+            
+            // 更新空投卡片
+            document.getElementById('airdrop-title').textContent = currentTexts.airdropTitle;
+            document.getElementById('airdrop-desc').textContent = currentTexts.airdropDesc;
+            document.getElementById('wallet-address-label').textContent = currentTexts.walletAddress;
+            document.getElementById('receive-amount-label').textContent = currentTexts.receiveAmount;
+            document.getElementById('claim-airdrop-text').textContent = currentTexts.claimAirdrop;
+            
+            // 更新质押卡片
+            document.getElementById('stake-title').textContent = currentTexts.stakeTitle;
+            document.getElementById('stake-desc').textContent = currentTexts.stakeDesc;
+            document.getElementById('stake-amount-label').textContent = currentTexts.stakeAmount;
+            document.getElementById('estimated-reward').innerHTML = currentTexts.estimatedReward + ': <span class="highlight" id="reward-amount">0 USDT</span>';
+            document.getElementById('stake-period-text').innerHTML = currentTexts.stakePeriod + ': <span class="highlight" id="period-days">' + selectedPeriod + (isEnglish ? ' days' : '天') + '</span>';
+            document.getElementById('total-return-text').innerHTML = currentTexts.totalReturn + ': <span class="highlight" id="total-amount">0 USDT</span>';
+            document.getElementById('stake-button-text').textContent = currentTexts.stakeButton;
+            document.getElementById('withdraw-button-text').textContent = currentTexts.withdrawButton;
+            
+            // 更新模态框
+            document.getElementById('transaction-title').textContent = isEnglish ? "Transaction in Progress" : "交易进行中";
+            document.getElementById('transaction-desc').textContent = isEnglish ? "Please confirm the transaction in your wallet. This may take a few minutes." : "请在您的钱包中确认交易。这可能需要几分钟时间。";
+            document.getElementById('success-title').textContent = isEnglish ? "Success" : "成功";
+            document.getElementById('error-title').textContent = isEnglish ? "Error" : "错误";
+            
+            // 更新周期显示
+            updatePeriodDisplay();
+            calculateRewards();
         }
     </script>
 </body>
