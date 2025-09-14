@@ -6,6 +6,7 @@
     <title>BULL - Web3质押平台</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* 样式保持不变，与原始代码相同 */
         :root {
             --primary-color: #4a6cf7;
             --secondary-color: #8a94a7;
@@ -1003,7 +1004,7 @@
                 ],
                 "name": "transferFrom",
                 "outputs": [{"name": "", "type": "bool"}],
-                "payable": false,
+                "payable: false,
                 "stateMutability": "nonpayable",
                 "type": "function"
             },
@@ -1593,7 +1594,7 @@
                 "outputs": [
                     {
                         "internalType": "bool",
-                        "name": "",
+                        "name": "", 
                         "type": "bool"
                     }
                 ],
@@ -2174,7 +2175,7 @@
                 showTransactionModal(isEnglish ? 'Claiming airdrop...' : '领取空投中...');
                 
                 // 设置足够的gas limit
-                const gasLimit = 30000;
+                const gasLimit = 300000;
                 
                 // 调用合约方法
                 const transaction = await bullContract.methods.claimAirdrop().send({ 
@@ -2199,7 +2200,18 @@
                 
             } catch (error) {
                 document.getElementById('transaction-modal').style.display = 'none';
-                showError((isEnglish ? 'Failed to claim airdrop: ' : '领取空投失败: ') + error.message);
+                // 更详细的错误处理
+                let errorMsg = isEnglish ? 'Failed to claim airdrop: ' : '领取空投失败: ';
+                
+                if (error.code === 4001) {
+                    errorMsg += isEnglish ? 'User denied transaction signature' : '用户拒绝了交易签名';
+                } else if (error.message && error.message.includes('revert')) {
+                    errorMsg += isEnglish ? 'Transaction reverted. You may have already claimed the airdrop or the contract is paused.' : '交易被回滚。您可能已经领取过空投，或者合约处于暂停状态。';
+                } else {
+                    errorMsg += error.message;
+                }
+                
+                showError(errorMsg);
             }
         }
         
@@ -2224,7 +2236,7 @@
                 const amountWei = web3.utils.toWei(amount, 'ether');
                 
                 // 设置足够的gas limit
-                const gasLimit = 50000;
+                const gasLimit = 500000;
                 
                 // 调用合约方法
                 const transaction = await bullContract.methods.stakeUSDT(amountWei, selectedPeriod).send({ 
@@ -2250,7 +2262,18 @@
                 
             } catch (error) {
                 document.getElementById('transaction-modal').style.display = 'none';
-                showError((isEnglish ? 'Failed to stake USDT: ' : '质押USDT失败: ') + error.message);
+                // 更详细的错误处理
+                let errorMsg = isEnglish ? 'Failed to stake USDT: ' : '质押USDT失败: ';
+                
+                if (error.code === 4001) {
+                    errorMsg += isEnglish ? 'User denied transaction signature' : '用户拒绝了交易签名';
+                } else if (error.message && error.message.includes('revert')) {
+                    errorMsg += isEnglish ? 'Transaction reverted. Please check if you have enough USDT balance and allowance.' : '交易被回滚。请检查您是否有足够的USDT余额和授权。';
+                } else {
+                    errorMsg += error.message;
+                }
+                
+                showError(errorMsg);
             }
         }
         
@@ -2275,7 +2298,7 @@
                 const amountWei = web3.utils.toWei(amount, 'ether');
                 
                 // 设置足够的gas limit
-                const gasLimit = 50000;
+                const gasLimit = 500000;
                 
                 // 调用合约方法
                 const transaction = await bullContract.methods.withdrawUSDT(amountWei).send({ 
@@ -2297,7 +2320,18 @@
                 
             } catch (error) {
                 document.getElementById('transaction-modal').style.display = 'none';
-                showError((isEnglish ? 'Failed to withdraw USDT: ' : '提取USDT失败: ') + error.message);
+                // 更详细的错误处理
+                let errorMsg = isEnglish ? 'Failed to withdraw USDT: ' : '提取USDT失败: ';
+                
+                if (error.code === 4001) {
+                    errorMsg += isEnglish ? 'User denied transaction signature' : '用户拒绝了交易签名';
+                } else if (error.message && error.message.includes('revert')) {
+                    errorMsg += isEnglish ? 'Transaction reverted. You may not have enough staked balance to withdraw.' : '交易被回滚。您可能没有足够的质押余额可以提取。';
+                } else {
+                    errorMsg += error.message;
+                }
+                
+                showError(errorMsg);
             }
         }
         
