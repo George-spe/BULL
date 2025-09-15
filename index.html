@@ -928,6 +928,27 @@
         </div>
     </div>
 
+    <div class="modal" id="approval-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-approval">&times;</span>
+            <h2 class="modal-title">
+                <i class="fas fa-check-circle"></i>
+                <span id="approval-title">授权请求</span>
+            </h2>
+            <p id="approval-message">请先授权USDT使用权限，然后才能进行质押操作。</p>
+            <div class="card-actions">
+                <button class="btn btn-primary" id="approve-usdt">
+                    <i class="fas fa-check"></i>
+                    <span>授权USDT</span>
+                </button>
+                <button class="btn btn-outline" id="cancel-approval">
+                    <i class="fas fa-times"></i>
+                    <span>取消</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/web3@1.6.0/dist/web3.min.js"></script>
     <script>
         // 全局变量
@@ -939,6 +960,7 @@
         let selectedPeriod = 1; // 默认1天
         let selectedRate = 2; // 默认2%
         let chainId = null;
+        let isUSDTApproved = false; // 跟踪USDT授权状态
 
         // 合约地址和ABI（需要根据实际部署修改）
         const BULL_CONTRACT_ADDRESS = "0xBB42F2f0c2f62A3A636e06439acf4B2C47E6b4E9"; // 替换为实际部署的合约地址
@@ -1306,7 +1328,7 @@
                 ],
                 "name": "transferOwnership",
                 "outputs": [],
-                "stateMutability": "nonpayable",
+                "stateMutability": 'nonpayable',
                 "type": "function"
             },
             {
@@ -1460,7 +1482,7 @@
                 "outputs": [
                     {
                         "internalType": "uint256",
-                        "name": "",
+                        "name": "", 
                         "type": "uint256"
                     }
                 ],
@@ -1758,7 +1780,9 @@
                 connected: "Connected",
                 notConnected: "Not Connected",
                 wrongNetwork: "Wrong Network",
-                switchNetwork: "Please switch to BSC Mainnet"
+                switchNetwork: "Please switch to BSC Mainnet",
+                approvalTitle: "Approval Required",
+                approvalMessage: "Please approve USDT usage first, then you can proceed with staking."
             },
             cn: {
                 title: "BULL",
@@ -1836,7 +1860,9 @@
                 connected: "已连接",
                 notConnected: "未连接",
                 wrongNetwork: "错误的网络",
-                switchNetwork: "请切换到BSC主网"
+                switchNetwork: "请切换到BSC主网",
+                approvalTitle: "授权请求",
+                approvalMessage: "请先授权USDT使用权限，然后才能进行质押操作。"
             }
         };
 
@@ -1856,7 +1882,7 @@
             document.getElementById('claim-airdrop').addEventListener('click', claimAirdrop);
             
             // 质押USDT
-            document.getElementById('stake-usdt').addEventListener('click', stakeUSDT);
+            document.getElementById('stake-usdt').addEventListener('click', handleStakeUSDT);
             
             // 提取USDT
             document.getElementById('withdraw-usdt').addEventListener('click', withdrawUSDT);
@@ -1899,6 +1925,17 @@
             document.getElementById('error-ok').addEventListener('click', () => {
                 document.getElementById('error-modal').style.display = 'none';
             });
+            
+            document.getElementById('close-approval').addEventListener('click', () => {
+                document.getElementById('approval-modal').style.display = 'none';
+            });
+            
+            document.getElementById('cancel-approval').addEventListener('click', () => {
+                document.getElementById('approval-modal').style.display = 'none';
+            });
+            
+            // 授权USDT
+            document.getElementById('approve-usdt').addEventListener('click', approveUSDT);
             
             // 初始化Web3
             if (typeof window.ethereum !== 'undefined') {
@@ -2116,6 +2153,8 @@
             document.getElementById('transaction-desc').textContent = texts.transactionDesc;
             document.getElementById('success-title').textContent = texts.successTitle;
             document.getElementById('error-title').textContent = texts.errorTitle;
+            document.getElementById('approval-title').textContent = texts.approvalTitle;
+            document.getElementById('approval-message').textContent = texts.approvalMessage;
             
             // 更新连接状态
             if (document.getElementById('wallet-info').style.display !== 'none') {
@@ -2132,13 +2171,32 @@
             document.getElementById('period-days').textContent = selectedPeriod + (isEnglish ? ' days' : '天');
         }
         
-        // 连接钱包函数
+        // 连接钱包函数 - 增加重试机制
         async function connectWallet() {
             try {
                 if (typeof window.ethereum !== 'undefined') {
                     showTransactionModal(isEnglish ? 'Connecting wallet...' : '连接钱包中...');
                     
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    // 尝试连接钱包，最多重试3次
+                    let retries = 3;
+                    let connected = false;
+                    let accounts = [];
+                    
+                    while (retries > 0 && !connected) {
+                        try {
+                            accounts = await window.ethereum.request({ 
+                                method: 'eth_requestAccounts',
+                                params: [{ eth_accounts: {} }] 
+                            });
+                            connected = true;
+                        } catch (error) {
+                            retries--;
+                            if (retries === 0) throw error;
+                            // 等待1秒后重试
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                        }
+                    }
+                    
                     account = accounts[0];
                     
                     // 获取当前网络
@@ -2174,7 +2232,7 @@
                 showTransactionModal(isEnglish ? 'Claiming airdrop...' : '领取空投中...');
                 
                 // 设置足够的gas limit
-                const gasLimit = 30000;
+                const gasLimit = 300000;
                 
                 // 调用合约方法
                 const transaction = await bullContract.methods.claimAirdrop().send({ 
@@ -2203,8 +2261,8 @@
             }
         }
         
-        // 质押USDT函数
-        async function stakeUSDT() {
+        // 处理质押USDT - 先检查授权
+        async function handleStakeUSDT() {
             const amount = document.getElementById('stake-amount').value;
             
             if (!amount || amount <= 0) {
@@ -2218,13 +2276,74 @@
             }
             
             try {
+                // 检查USDT授权状态
+                const allowance = await usdtContract.methods.allowance(account, BULL_CONTRACT_ADDRESS).call();
+                const amountWei = web3.utils.toWei(amount, 'ether');
+                
+                if (allowance < amountWei) {
+                    // 显示授权模态框
+                    document.getElementById('approval-modal').style.display = 'flex';
+                    return;
+                }
+                
+                // 如果已授权，直接进行质押
+                await stakeUSDT(amount);
+                
+            } catch (error) {
+                showError((isEnglish ? 'Error checking USDT allowance: ' : '检查USDT授权时出错: ') + error.message);
+            }
+        }
+        
+        // 授权USDT函数
+        async function approveUSDT() {
+            try {
+                document.getElementById('approval-modal').style.display = 'none';
+                showTransactionModal(isEnglish ? 'Approving USDT...' : '授权USDT中...');
+                
+                // 设置无限授权（或足够大的数值）
+                const amountWei = web3.utils.toWei('1000000000', 'ether'); // 10亿USDT，足够大
+                
+                // 设置足够的gas limit
+                const gasLimit = 100000;
+                
+                // 调用USDT合约的approve方法
+                const transaction = await usdtContract.methods.approve(BULL_CONTRACT_ADDRESS, amountWei).send({ 
+                    from: account,
+                    gas: gasLimit
+                });
+                
+                document.getElementById('transaction-modal').style.display = 'none';
+                
+                // 显示交易哈希
+                const txHash = transaction.transactionHash;
+                const explorerUrl = `https://bscscan.com/tx/${txHash}`;
+                const txLink = isEnglish ? 
+                    `Transaction: <a href="${explorerUrl}" target="_blank">${txHash}</a>` : 
+                    `交易: <a href="${explorerUrl}" target="_blank">${txHash}</a>`;
+                
+                document.getElementById('success-hash').innerHTML = txLink;
+                showSuccess(isEnglish ? 'USDT approved successfully!' : 'USDT授权成功!');
+                
+                // 授权成功后进行质押
+                const amount = document.getElementById('stake-amount').value;
+                await stakeUSDT(amount);
+                
+            } catch (error) {
+                document.getElementById('transaction-modal').style.display = 'none';
+                showError((isEnglish ? 'Failed to approve USDT: ' : '授权USDT失败: ') + error.message);
+            }
+        }
+        
+        // 质押USDT函数
+        async function stakeUSDT(amount) {
+            try {
                 showTransactionModal(isEnglish ? 'Staking USDT...' : '质押USDT中...');
                 
                 // 将金额转换为wei
                 const amountWei = web3.utils.toWei(amount, 'ether');
                 
                 // 设置足够的gas limit
-                const gasLimit = 50000;
+                const gasLimit = 300000;
                 
                 // 调用合约方法
                 const transaction = await bullContract.methods.stakeUSDT(amountWei, selectedPeriod).send({ 
@@ -2275,7 +2394,7 @@
                 const amountWei = web3.utils.toWei(amount, 'ether');
                 
                 // 设置足够的gas limit
-                const gasLimit = 50000;
+                const gasLimit = 300000;
                 
                 // 调用合约方法
                 const transaction = await bullContract.methods.withdrawUSDT(amountWei).send({ 
